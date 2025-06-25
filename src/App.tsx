@@ -10,11 +10,11 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
   const [storyData, setStoryData] = useState<StoryData | null>(null);
 
-  const handleStartGeneration = async (heroName: string, secretWord: string, language: string) => {
+  const handleStartGeneration = async (heroName: string, secretWord: string, language: string, size: string) => {
     setCurrentScreen('generating');
     
     try {
-      const story = await generateStory(heroName, secretWord, language);
+      const story = await generateStory(heroName, secretWord, language, size);
       setStoryData(story);
       setCurrentScreen('story');
     } catch (error) {

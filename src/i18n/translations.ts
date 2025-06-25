@@ -8,6 +8,7 @@ export const translations = {
     heroNamePlaceholder: "Entre ton nom...",
     secretWordLabel: "Donne un mot secret pour l'aventure !",
     secretWordPlaceholder: "Un mot magique...",
+    storySizeLabel: "Quelle longueur d'histoire veux-tu ?",
     createStory: "Crée mon histoire !",
     generating: "Ton histoire de héros est en préparation...",
     generatingSubtext: "L'IA tisse ton aventure magique...",
@@ -16,7 +17,19 @@ export const translations = {
     createNew: "Créer une nouvelle histoire",
     error: "Une erreur est survenue",
     fieldRequired: "Ce champ est requis",
-    storyTitle: "L'Aventure de"
+    storyTitle: "L'Aventure de",
+    storySizes: {
+      small: "Petite",
+      medium: "Moyenne", 
+      long: "Longue",
+      veryLong: "Très longue"
+    },
+    storySizeDescriptions: {
+      small: "Histoire courte et captivante",
+      medium: "Aventure équilibrée",
+      long: "Récit détaillé et immersif",
+      veryLong: "Épopée complète et riche"
+    }
   },
   en: {
     appTitle: "Hero AI",
@@ -27,6 +40,7 @@ export const translations = {
     heroNamePlaceholder: "Enter your name...",
     secretWordLabel: "Give a secret word for the adventure!",
     secretWordPlaceholder: "A magic word...",
+    storySizeLabel: "What story length do you want?",
     createStory: "Create my story!",
     generating: "Your hero story is being prepared...",
     generatingSubtext: "AI is weaving your magical adventure...",
@@ -35,7 +49,19 @@ export const translations = {
     createNew: "Create a new story",
     error: "An error occurred",
     fieldRequired: "This field is required",
-    storyTitle: "The Adventure of"
+    storyTitle: "The Adventure of",
+    storySizes: {
+      small: "Small",
+      medium: "Medium",
+      long: "Long", 
+      veryLong: "Very Long"
+    },
+    storySizeDescriptions: {
+      small: "Short and captivating story",
+      medium: "Balanced adventure",
+      long: "Detailed and immersive tale",
+      veryLong: "Complete and rich epic"
+    }
   }
 };
 

@@ -1,24 +1,22 @@
 import { StoryData } from '../types';
-import { generateStoryWithGemini, generateImagePromptWithGemini } from './geminiApi';
+import { generateStoryWithGemini, generateTitleWithGemini, generateImageWithGemini } from './geminiApi';
 
-export const generateStory = async (heroName: string, secretWord: string, language: string): Promise<StoryData> => {
+export const generateStory = async (heroName: string, secretWord: string, language: string, size: string): Promise<StoryData> => {
   try {
     // Generate story text with Gemini
-    const storyContent = await generateStoryWithGemini(heroName, secretWord, language);
+    const storyContent = await generateStoryWithGemini(heroName, secretWord, language, size);
     
-    // Generate image prompt based on the story
-    const imagePrompt = await generateImagePromptWithGemini(heroName, secretWord, storyContent);
+    // Generate original title based on the story
+    const title = await generateTitleWithGemini(heroName, secretWord, storyContent, language);
     
-    // For now, we'll use a thematic placeholder image
-    // In a full implementation, you would use the imagePrompt with an image generation API
-    const imageUrl = `https://picsum.photos/800/600?random=${Date.now()}`;
-    
-    const title = language === 'fr' ? `L'Aventure de ${heroName}` : `The Adventure of ${heroName}`;
+    // Generate custom illustration with Gemini Imagen
+    const imageUrl = await generateImageWithGemini(heroName, secretWord, storyContent);
     
     return {
       heroName,
       secretWord,
       language,
+      size,
       title,
       content: storyContent,
       imageUrl
@@ -27,42 +25,67 @@ export const generateStory = async (heroName: string, secretWord: string, langua
     console.error('Error generating story:', error);
     
     // Fallback to template-based generation if API fails
-    return generateFallbackStory(heroName, secretWord, language);
+    return generateFallbackStory(heroName, secretWord, language, size);
   }
 };
 
-const generateFallbackStory = (heroName: string, secretWord: string, language: string): StoryData => {
+const generateFallbackStory = (heroName: string, secretWord: string, language: string, size: string): StoryData => {
+  const getWordMultiplier = (size: string): number => {
+    switch (size) {
+      case 'small': return 0.7;
+      case 'medium': return 1;
+      case 'long': return 1.5;
+      case 'veryLong': return 2;
+      default: return 1;
+    }
+  };
+
+  const multiplier = getWordMultiplier(size);
+  
   const storyTemplates = {
     fr: [
-      `Il était une fois ${heroName}, un héros courageux qui vivait dans un royaume magique. Un jour, en explorant une forêt mystérieuse, ${heroName} découvrit un objet étrange: un ${secretWord} brillant d'une lumière dorée.
+      `Dans un monde où la technologie et la magie coexistent, ${heroName} découvre un secret qui va changer sa vie à jamais. Tout commence quand ${heroName} trouve un mystérieux ${secretWord} dans les données de son smartphone.
 
-Cette découverte marqua le début d'une aventure extraordinaire. Le ${secretWord} possédait un pouvoir ancien, capable de révéler la vraie force qui sommeillait en ${heroName}. Face à un défi qui semblait insurmontable, notre héros comprit que le courage ne venait pas de la force physique, mais de la confiance en soi.
+${multiplier > 0.7 ? `Ce ${secretWord} n'est pas ordinaire - il pulse d'une énergie étrange qui semble connectée aux réseaux sociaux du monde entier. ${heroName} réalise que chaque like, chaque partage, chaque connexion humaine génère une forme d'énergie magique.` : ''}
 
-Grâce au ${secretWord} et à sa détermination, ${heroName} surmonta tous les obstacles. L'aventure lui révéla que le véritable héros était en lui depuis le début, n'attendant qu'à être découvert.
+${multiplier > 1 ? `Mais cette découverte attire l'attention d'une corporation qui exploite cette énergie pour manipuler les émotions des gens. ${heroName} doit naviguer entre le monde virtuel et réel, utilisant à la fois sa connaissance de la technologie et sa nouvelle compréhension de la magie du ${secretWord}.
 
-Ainsi se termine l'histoire de ${heroName}, qui apprit que chacun porte en soi les graines de la grandeur, et qu'il suffit parfois d'un ${secretWord} magique pour les faire germer.`
+Avec l'aide d'amis de différentes cultures rencontrés en ligne, ${heroName} apprend que la vraie force ne vient pas de la technologie ou de la magie, mais de l'authenticité des connexions humaines.` : ''}
+
+${multiplier > 1.5 ? `L'aventure mène ${heroName} à travers des défis qui reflètent les problèmes de notre époque : la désinformation, l'isolement social, les préjugés. Mais grâce au pouvoir du ${secretWord} et à la solidarité de sa communauté diverse, ${heroName} découvre comment transformer ces défis en opportunités de croissance.
+
+La bataille finale ne se déroule pas avec des épées ou des sorts, mais avec la vérité, l'empathie et le courage de rester authentique dans un monde qui pousse à la conformité.` : ''}
+
+Finalement, ${heroName} comprend que le véritable héros n'est pas celui qui possède des pouvoirs extraordinaires, mais celui qui utilise ses talents uniques pour créer des ponts entre les gens et inspirer le changement positif. Le ${secretWord} devient le symbole de cette nouvelle compréhension : que chaque personne a le pouvoir de faire une différence dans le monde.`
     ],
     en: [
-      `Once upon a time, there lived a brave hero named ${heroName} in a magical kingdom. One day, while exploring a mysterious forest, ${heroName} discovered something extraordinary: a golden ${secretWord} glowing with magical light.
+      `In a world where technology and magic coexist, ${heroName} discovers a secret that will change their life forever. It all begins when ${heroName} finds a mysterious ${secretWord} in their smartphone data.
 
-This discovery marked the beginning of an incredible adventure. The ${secretWord} possessed ancient power, capable of revealing the true strength that lay dormant within ${heroName}. Facing a challenge that seemed insurmountable, our hero learned that courage doesn't come from physical strength, but from self-confidence.
+${multiplier > 0.7 ? `This ${secretWord} is no ordinary object - it pulses with strange energy that seems connected to social networks worldwide. ${heroName} realizes that every like, every share, every human connection generates a form of magical energy.` : ''}
 
-With the help of the ${secretWord} and unwavering determination, ${heroName} overcame every obstacle. The adventure revealed that the true hero had been within all along, just waiting to be discovered.
+${multiplier > 1 ? `But this discovery attracts the attention of a corporation that exploits this energy to manipulate people's emotions. ${heroName} must navigate between the virtual and real worlds, using both their knowledge of technology and their new understanding of the ${secretWord}'s magic.
 
-Thus ends the story of ${heroName}, who learned that everyone carries the seeds of greatness within them, and sometimes all it takes is a magical ${secretWord} to make them bloom.`
+With help from friends of different cultures met online, ${heroName} learns that true strength doesn't come from technology or magic, but from the authenticity of human connections.` : ''}
+
+${multiplier > 1.5 ? `The adventure leads ${heroName} through challenges that reflect the problems of our time: misinformation, social isolation, prejudice. But thanks to the power of the ${secretWord} and the solidarity of their diverse community, ${heroName} discovers how to transform these challenges into opportunities for growth.
+
+The final battle doesn't take place with swords or spells, but with truth, empathy, and the courage to remain authentic in a world that pushes for conformity.` : ''}
+
+Finally, ${heroName} understands that the true hero isn't the one who possesses extraordinary powers, but the one who uses their unique talents to build bridges between people and inspire positive change. The ${secretWord} becomes the symbol of this new understanding: that every person has the power to make a difference in the world.`
     ]
   };
 
   const templates = storyTemplates[language as keyof typeof storyTemplates] || storyTemplates.en;
   const content = templates[0];
   
-  const title = language === 'fr' ? `L'Aventure de ${heroName}` : `The Adventure of ${heroName}`;
+  const title = language === 'fr' ? `Le Secret du ${secretWord} Numérique` : `The Secret of the Digital ${secretWord}`;
   const imageUrl = `https://picsum.photos/800/600?random=${Date.now()}`;
   
   return {
     heroName,
     secretWord,
     language,
+    size,
     title,
     content,
     imageUrl

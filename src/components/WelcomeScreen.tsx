@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { LanguageSelector } from './LanguageSelector';
 import { translations, Language } from '../i18n/translations';
-import { LanguageOption } from '../types';
+import { LanguageOption, StorySizeOption } from '../types';
 
 interface WelcomeScreenProps {
-  onStartGeneration: (heroName: string, secretWord: string, language: string) => void;
+  onStartGeneration: (heroName: string, secretWord: string, language: string, size: string) => void;
   selectedLanguage: string;
   onLanguageChange: (language: string) => void;
 }
@@ -21,9 +21,17 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 }) => {
   const [heroName, setHeroName] = useState('');
   const [secretWord, setSecretWord] = useState('');
+  const [storySize, setStorySize] = useState('medium');
   const [errors, setErrors] = useState<{ heroName?: string; secretWord?: string }>({});
 
   const t = translations[selectedLanguage as Language];
+
+  const storySizeOptions: StorySizeOption[] = [
+    { code: 'small', name: t.storySizes.small, description: t.storySizeDescriptions.small },
+    { code: 'medium', name: t.storySizes.medium, description: t.storySizeDescriptions.medium },
+    { code: 'long', name: t.storySizes.long, description: t.storySizeDescriptions.long },
+    { code: 'veryLong', name: t.storySizes.veryLong, description: t.storySizeDescriptions.veryLong }
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,13 +49,17 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     setErrors(newErrors);
     
     if (Object.keys(newErrors).length === 0) {
-      onStartGeneration(heroName.trim(), secretWord.trim(), selectedLanguage);
+      onStartGeneration(heroName.trim(), secretWord.trim(), selectedLanguage, storySize);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%239C92AC%22%20fill-opacity=%220.1%22%3E%3Ccircle%20cx=%2230%22%20cy=%2230%22%20r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+      </div>
       
       <div className="w-full max-w-md relative">
         {/* Language Selector */}
@@ -118,6 +130,29 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
               {errors.secretWord && (
                 <p className="text-red-500 text-sm mt-1">{errors.secretWord}</p>
               )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                📏 {t.storySizeLabel}
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {storySizeOptions.map((option) => (
+                  <button
+                    key={option.code}
+                    type="button"
+                    onClick={() => setStorySize(option.code)}
+                    className={`p-3 rounded-xl border-2 transition-all duration-200 text-left ${
+                      storySize === option.code
+                        ? 'border-purple-400 bg-purple-50 text-purple-700'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                    }`}
+                  >
+                    <div className="font-medium text-sm">{option.name}</div>
+                    <div className="text-xs opacity-75 mt-1">{option.description}</div>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <button
