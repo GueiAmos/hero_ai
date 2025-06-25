@@ -22,69 +22,76 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-orange-50 p-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl">
-              <BookOpen size={24} className="text-white" />
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="p-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-orange-500 rounded-2xl shadow-lg">
+              <BookOpen size={28} className="text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-orange-500 bg-clip-text text-transparent">
               {t.storyReady}
             </h1>
           </div>
         </div>
 
-        {/* Story Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+        {/* Story Content - Desktop: Side by side, Mobile: Stacked */}
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-white/60">
           {/* Story Header */}
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-white">
-            <h2 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
-              <Sparkles size={24} />
+          <div className="bg-gradient-to-r from-blue-500 via-cyan-500 to-orange-500 p-6 text-white">
+            <h2 className="text-3xl font-bold text-center flex items-center justify-center gap-3">
+              <Sparkles size={28} />
               {storyData.title}
             </h2>
           </div>
 
-          {/* Story Image */}
-          <div className="p-6 bg-gray-50">
-            <img
-              src={storyData.imageUrl}
-              alt="Story illustration"
-              className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop';
-              }}
-            />
-          </div>
+          {/* Main Content Area */}
+          <div className="lg:flex lg:min-h-[600px]">
+            {/* Story Image - Left on desktop, top on mobile */}
+            <div className="lg:w-1/2 p-8 bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+              <div className="w-full max-w-lg">
+                <img
+                  src={storyData.imageUrl}
+                  alt="Story illustration"
+                  className="w-full h-auto rounded-2xl shadow-2xl border-4 border-white/80"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop';
+                  }}
+                />
+              </div>
+            </div>
 
-          {/* Story Content */}
-          <div className="p-8">
-            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-              {storyData.content.split('\n\n').map((paragraph, index) => (
-                <p key={index} className="mb-4 text-justify">
-                  {paragraph.trim()}
-                </p>
-              ))}
+            {/* Story Text - Right on desktop, bottom on mobile */}
+            <div className="lg:w-1/2 p-8 bg-white flex flex-col">
+              <div className="flex-1 overflow-y-auto max-h-[600px] lg:max-h-none">
+                <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
+                  {storyData.content.split('\n\n').map((paragraph, index) => (
+                    <p key={index} className="mb-6 text-justify text-lg leading-8 first-letter:text-5xl first-letter:font-bold first-letter:text-blue-600 first-letter:float-left first-letter:mr-2 first-letter:mt-1">
+                      {paragraph.trim()}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="p-6 bg-gray-50 border-t border-gray-100">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="p-8 bg-gradient-to-r from-blue-50 via-cyan-50 to-orange-50 border-t-2 border-gray-100">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
               <button
                 onClick={handleDownloadPDF}
-                className="flex-1 sm:flex-none bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center gap-2"
+                className="flex-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-orange-500 hover:from-blue-600 hover:via-cyan-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center gap-3 text-lg"
               >
-                <Download size={20} />
+                <Download size={22} />
                 {t.downloadPdf}
               </button>
               
               <button
                 onClick={onCreateNew}
-                className="flex-1 sm:flex-none bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-6 rounded-2xl border-3 border-gray-300 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center gap-3 text-lg"
               >
-                <RotateCcw size={20} />
+                <RotateCcw size={22} />
                 {t.createNew}
               </button>
             </div>
@@ -92,9 +99,9 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-gray-500">
-          <p className="flex items-center justify-center gap-2">
-            <Sparkles size={16} />
+        <div className="text-center mt-8 text-gray-600">
+          <p className="flex items-center justify-center gap-2 text-lg font-medium">
+            <Sparkles size={18} className="text-orange-500" />
             Généré avec ❤️ par Hero AI
           </p>
         </div>

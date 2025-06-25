@@ -151,16 +151,33 @@ Respond only with the title, without quotes or explanations.`;
 };
 
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
-  const prompt = `Create a beautiful, detailed illustration for a story about ${heroName}. The image should be:
-- Family-friendly and suitable for all ages
-- Colorful and inspiring
-- Show the main character ${heroName} in an adventurous scene
-- Include elements related to "${secretWord}" in a creative way
-- Art style: modern digital illustration, vibrant colors, fantasy adventure theme
-- High quality, detailed, professional illustration
-- Scene should capture the essence of adventure and heroism
+  const prompt = `Create a beautiful Studio Ghibli or anime-style illustration for a story about ${heroName}. The image should be:
 
-Based on this story excerpt: ${storyText.substring(0, 500)}...`;
+STYLE REQUIREMENTS:
+- Studio Ghibli aesthetic: soft, dreamy, hand-drawn animation style
+- Anime/manga inspired character design
+- Watercolor-like textures and soft lighting
+- Whimsical and magical atmosphere
+- Rich, vibrant colors with gentle gradients
+- Detailed backgrounds with natural elements
+
+CONTENT REQUIREMENTS:
+- Show the main character ${heroName} as an anime/manga style character
+- Include elements related to "${secretWord}" creatively integrated into the scene
+- Family-friendly and suitable for all ages
+- Inspiring and adventurous scene
+- Beautiful natural or fantastical setting
+- Soft, warm lighting reminiscent of Ghibli films
+
+TECHNICAL SPECIFICATIONS:
+- High quality, detailed illustration
+- Professional anime/manga art style
+- Aspect ratio suitable for story illustration
+- Colors should be warm, inviting, and magical
+
+Based on this story excerpt: ${storyText.substring(0, 500)}...
+
+The illustration should capture the wonder and magic of Studio Ghibli films while telling the story of ${heroName}'s adventure.`;
 
   try {
     const response = await fetch(`${IMAGEN_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -183,21 +200,21 @@ Based on this story excerpt: ${storyText.substring(0, 500)}...`;
 
     if (!response.ok) {
       console.warn(`Imagen API error: ${response.status}, falling back to placeholder`);
-      // Fallback to a thematic placeholder
-      return `https://picsum.photos/800/600?random=${Date.now()}`;
+      // Fallback to a Ghibli-style placeholder
+      return `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop`;
     }
 
     const data: ImagenResponse = await response.json();
     
     if (!data.candidates || data.candidates.length === 0) {
       console.warn('No image generated, using fallback');
-      return `https://picsum.photos/800/600?random=${Date.now()}`;
+      return `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop`;
     }
 
     return data.candidates[0].image.imageUri;
   } catch (error) {
     console.error('Error generating image with Gemini:', error);
-    // Fallback to placeholder
-    return `https://picsum.photos/800/600?random=${Date.now()}`;
+    // Fallback to anime/fantasy themed placeholder
+    return `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop`;
   }
 };

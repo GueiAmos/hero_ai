@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 * {
   box-sizing: border-box;
@@ -23,34 +23,34 @@ body {
 }
 
 .prose p {
-  margin-bottom: 1rem;
-  line-height: 1.75;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: #f1f5f9;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: linear-gradient(to bottom, #3b82f6, #06b6d4);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: linear-gradient(to bottom, #2563eb, #0891b2);
 }
 
 /* Animation improvements */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -58,8 +58,40 @@ body {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 .animate-fadeInUp {
-  animation: fadeInUp 0.5s ease-out;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced button styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-500 via-cyan-500 to-orange-500 hover:from-blue-600 hover:via-cyan-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+}
+
+.btn-secondary {
+  @apply bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-6 rounded-2xl border-3 border-gray-300 hover:border-gray-400 transition-all duration-300 transform hover:scale-105;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-white/40;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-5 py-4 rounded-2xl border-3 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium border-gray-300 focus:border-blue-400 bg-white;
 }
 
 /* Print styles for PDF generation */
@@ -72,4 +104,25 @@ body {
   .no-print {
     display: none !important;
   }
+}
+
+/* Responsive design improvements */
+@media (max-width: 640px) {
+  .prose p {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+}
+
+/* Enhanced first letter styling */
+.prose p:first-of-type::first-letter {
+  font-size: 4rem;
+  font-weight: 800;
+  float: left;
+  line-height: 0.8;
+  margin: 0.1em 0.1em 0 0;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
