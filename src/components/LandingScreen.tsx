@@ -110,8 +110,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
             <div className="relative">
               <div className="relative bg-white rounded-3xl shadow-2xl p-8 border border-slate-200">
                 <img
-                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop"
-                  alt="Hero AI Illustration"
+                  src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600&h=400&fit=crop"
+                  alt="Enfant lisant un livre magique avec des étoiles qui s'échappent"
                   className="w-full h-80 object-cover rounded-2xl"
                 />
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-r from-indigo-500 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg">

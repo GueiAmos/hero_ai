@@ -151,33 +151,31 @@ Respond only with the title, without quotes or explanations.`;
 };
 
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
-  const prompt = `Create a beautiful Studio Ghibli or anime-style illustration for a story about ${heroName}. The image should be:
+  const prompt = `Create a beautiful anime-style illustration for a children's story. 
 
-STYLE REQUIREMENTS:
-- Studio Ghibli aesthetic: soft, dreamy, hand-drawn animation style
-- Anime/manga inspired character design
-- Watercolor-like textures and soft lighting
-- Whimsical and magical atmosphere
-- Rich, vibrant colors with gentle gradients
-- Detailed backgrounds with natural elements
+CHARACTER: Show ${heroName} as a young anime character with expressive eyes and colorful hair.
 
-CONTENT REQUIREMENTS:
-- Show the main character ${heroName} as an anime/manga style character
-- Include elements related to "${secretWord}" creatively integrated into the scene
-- Family-friendly and suitable for all ages
-- Inspiring and adventurous scene
-- Beautiful natural or fantastical setting
-- Soft, warm lighting reminiscent of Ghibli films
+STYLE: 
+- Anime/manga art style similar to Studio Ghibli
+- Bright, vibrant colors
+- Soft lighting and magical atmosphere
+- Hand-drawn animation aesthetic
+- Detailed background with nature elements
 
-TECHNICAL SPECIFICATIONS:
-- High quality, detailed illustration
-- Professional anime/manga art style
-- Aspect ratio suitable for story illustration
-- Colors should be warm, inviting, and magical
+SCENE: 
+- ${heroName} in an adventure scene related to "${secretWord}"
+- Magical or fantastical setting
+- Cheerful and inspiring mood
+- Family-friendly content
+- Beautiful landscape or magical environment
 
-Based on this story excerpt: ${storyText.substring(0, 500)}...
+TECHNICAL:
+- High quality anime illustration
+- Colorful and engaging for children
+- Safe for all ages
+- Professional manga/anime art style
 
-The illustration should capture the wonder and magic of Studio Ghibli films while telling the story of ${heroName}'s adventure.`;
+Story context: ${storyText.substring(0, 300)}`;
 
   try {
     const response = await fetch(`${IMAGEN_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -193,6 +191,18 @@ The illustration should capture the wonder and magic of Studio Ghibli films whil
           {
             category: "HARM_CATEGORY_DANGEROUS_CONTENT",
             threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
           }
         ]
       })
@@ -200,7 +210,7 @@ The illustration should capture the wonder and magic of Studio Ghibli films whil
 
     if (!response.ok) {
       console.warn(`Imagen API error: ${response.status}, falling back to placeholder`);
-      // Fallback to a Ghibli-style placeholder
+      // Fallback to anime-style placeholder
       return `https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop`;
     }
 
