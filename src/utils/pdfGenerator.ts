@@ -70,8 +70,8 @@ const createPDFHTML = (storyData: StoryData): string => {
         body {
           font-family: 'Crimson Text', Georgia, serif;
           line-height: 1.8;
-          color: #2c3e50;
-          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          color: #1e293b;
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
           min-height: 100vh;
         }
         
@@ -88,7 +88,7 @@ const createPDFHTML = (storyData: StoryData): string => {
           text-align: center;
           margin-bottom: 50px;
           padding-bottom: 30px;
-          border-bottom: 3px solid #8B5CF6;
+          border-bottom: 3px solid #4f46e5;
           position: relative;
         }
         
@@ -100,13 +100,13 @@ const createPDFHTML = (storyData: StoryData): string => {
           transform: translateX(-50%);
           width: 100px;
           height: 3px;
-          background: linear-gradient(90deg, #8B5CF6, #3B82F6);
+          background: linear-gradient(90deg, #4f46e5, #3b82f6, #f59e0b);
         }
         
         .title {
           font-size: 2.5rem;
           font-weight: 600;
-          background: linear-gradient(135deg, #8B5CF6, #3B82F6);
+          background: linear-gradient(135deg, #4f46e5, #3b82f6, #f59e0b);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -155,7 +155,7 @@ const createPDFHTML = (storyData: StoryData): string => {
           float: left;
           line-height: 0.8;
           margin: 0.1em 0.1em 0 0;
-          color: #8B5CF6;
+          color: #4f46e5;
         }
         
         .footer {
@@ -169,7 +169,7 @@ const createPDFHTML = (storyData: StoryData): string => {
         
         .footer-title {
           font-size: 1.1rem;
-          color: #8B5CF6;
+          color: #4f46e5;
           font-weight: 600;
           margin-bottom: 10px;
         }
@@ -179,7 +179,7 @@ const createPDFHTML = (storyData: StoryData): string => {
           padding: 20px;
           border-radius: 15px;
           margin-top: 20px;
-          border-left: 5px solid #8B5CF6;
+          border-left: 5px solid #4f46e5;
         }
         
         .detail-item {
@@ -188,7 +188,7 @@ const createPDFHTML = (storyData: StoryData): string => {
         }
         
         .detail-label {
-          color: #8B5CF6;
+          color: #4f46e5;
           font-weight: 600;
         }
         

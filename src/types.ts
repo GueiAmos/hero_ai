@@ -20,4 +20,4 @@ export interface StorySizeOption {
   description: string;
 }
 
-export type AppScreen = 'welcome' | 'generating' | 'story';
+export type AppScreen = 'landing' | 'welcome' | 'generating' | 'story';

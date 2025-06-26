@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LandingScreen } from './components/LandingScreen';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { GeneratingScreen } from './components/GeneratingScreen';
 import { StoryScreen } from './components/StoryScreen';
@@ -6,7 +7,7 @@ import { generateStory } from './utils/storyGenerator';
 import { AppScreen, StoryData } from './types';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('welcome');
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('landing');
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
   const [storyData, setStoryData] = useState<StoryData | null>(null);
 
@@ -19,7 +20,6 @@ function App() {
       setCurrentScreen('story');
     } catch (error) {
       console.error('Error generating story:', error);
-      // In a real app, show error message and return to welcome screen
       setCurrentScreen('welcome');
     }
   };
@@ -33,13 +33,26 @@ function App() {
     setSelectedLanguage(language);
   };
 
+  const handleGetStarted = () => {
+    setCurrentScreen('welcome');
+  };
+
   return (
     <div className="App">
+      {currentScreen === 'landing' && (
+        <LandingScreen
+          onGetStarted={handleGetStarted}
+          selectedLanguage={selectedLanguage}
+          onLanguageChange={handleLanguageChange}
+        />
+      )}
+      
       {currentScreen === 'welcome' && (
         <WelcomeScreen
           onStartGeneration={handleStartGeneration}
           selectedLanguage={selectedLanguage}
           onLanguageChange={handleLanguageChange}
+          onBack={() => setCurrentScreen('landing')}
         />
       )}
       
