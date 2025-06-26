@@ -81,7 +81,7 @@ body {
 }
 
 .btn-secondary {
-  @apply bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-6 rounded-2xl border-3 border-gray-300 hover:border-gray-400 transition-all duration-300 transform hover:scale-105;
+  @apply bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-6 rounded-2xl border-2 border-gray-300 hover:border-gray-400 transition-all duration-300 transform hover:scale-105;
 }
 
 /* Card styles */
@@ -91,7 +91,7 @@ body {
 
 /* Input styles */
 .input-field {
-  @apply w-full px-5 py-4 rounded-2xl border-3 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium border-gray-300 focus:border-blue-400 bg-white;
+  @apply w-full px-5 py-4 rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium border-gray-300 focus:border-blue-400 bg-white;
 }
 
 /* Print styles for PDF generation */

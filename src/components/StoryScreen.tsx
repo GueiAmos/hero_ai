@@ -89,7 +89,7 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
               
               <button
                 onClick={onCreateNew}
-                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-6 rounded-2xl border-3 border-gray-300 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center gap-3 text-lg"
+                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-bold py-4 px-6 rounded-2xl border-2 border-gray-300 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center gap-3 text-lg"
               >
                 <RotateCcw size={22} />
                 {t.createNew}

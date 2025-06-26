@@ -103,7 +103,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 value={heroName}
                 onChange={(e) => setHeroName(e.target.value)}
                 placeholder={t.heroNamePlaceholder}
-                className={`w-full px-5 py-4 rounded-2xl border-3 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium ${
+                className={`w-full px-5 py-4 rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium ${
                   errors.heroName 
                     ? 'border-red-400 bg-red-50' 
                     : 'border-gray-300 focus:border-blue-400 bg-white'
@@ -123,7 +123,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 value={secretWord}
                 onChange={(e) => setSecretWord(e.target.value)}
                 placeholder={t.secretWordPlaceholder}
-                className={`w-full px-5 py-4 rounded-2xl border-3 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium ${
+                className={`w-full px-5 py-4 rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium ${
                   errors.secretWord 
                     ? 'border-red-400 bg-red-50' 
                     : 'border-gray-300 focus:border-blue-400 bg-white'
@@ -144,7 +144,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                     key={option.code}
                     type="button"
                     onClick={() => setStorySize(option.code)}
-                    className={`p-4 rounded-2xl border-3 transition-all duration-300 text-left transform hover:scale-105 ${
+                    className={`p-4 rounded-2xl border-2 transition-all duration-300 text-left transform hover:scale-105 ${
                       storySize === option.code
                         ? 'border-blue-400 bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 shadow-lg'
                         : 'border-gray-300 hover:border-gray-400 text-gray-700 bg-white hover:bg-gray-50'
