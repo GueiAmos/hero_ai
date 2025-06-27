@@ -38,7 +38,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 setIsOpen(false);
               }}
               className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors duration-200 ${
-                selectedLanguage === language.code ? 'bg-indigo-50 text-indigo-600' : 'text-slate-700'
+                selectedLanguage === language.code ? 'bg-blue-50 text-blue-600' : 'text-slate-700'
               }`}
             >
               <span className="text-xl">{language.flag}</span>
