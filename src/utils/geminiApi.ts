@@ -42,7 +42,7 @@ export const generateStoryWithGemini = async (heroName: string, secretWord: stri
   const wordCount = getWordCount(size);
   
   const prompt = language === 'fr' 
-    ? `Écris une histoire palpitante et fascinante adaptée aux lecteurs de 12 ans et plus. Le héros s'appelle ${heroName}. L'histoire doit inclure de manière créative et surprenante le mot "${secretWord}". 
+    ? `Écris une histoire palpitante et fascinante adaptée aux lecteurs de 12 ans et plus. Le héros s'appelle ${heroName}. L'histoire doit être en rapport avec le mot "${secretWord}". 
 
 EXIGENCES IMPORTANTES:
 - Histoire de ${wordCount} mots environ
@@ -167,7 +167,7 @@ export const generateImageWithGemini = async (heroName: string, secretWord: stri
   console.log('Using fallback image to avoid API issues');
   return getFallbackAnimeImage();
   
-  /* Commented out to prevent API errors - uncomment when API key is properly configured
+  // Commented out to prevent API errors - uncomment when API key is properly configured
   checkApiKey();
   
   // Extract key visual elements from the story
@@ -242,7 +242,7 @@ TECHNICAL SPECS:
     console.error('Error generating image with Gemini:', error);
     return getFallbackAnimeImage();
   }
-  */
+  
 };
 
 const getFallbackAnimeImage = (): string => {
