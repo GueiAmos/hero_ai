@@ -19,7 +19,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-5 py-3 bg-white/90 hover:bg-white rounded-2xl transition-all duration-300 backdrop-blur-sm border border-slate-200 shadow-lg"
+        className="flex items-center gap-3 px-6 py-3 bg-white/80 hover:bg-white/90 rounded-2xl transition-all duration-300 backdrop-blur-sm border border-white/50 shadow-lg hover:shadow-xl"
       >
         <Globe size={20} className="text-slate-600" />
         <span className="text-slate-700 font-bold">
@@ -29,7 +29,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-20">
+        <div className="absolute top-full left-0 mt-2 w-full bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden z-20">
           {languages.map((language) => (
             <button
               key={language.code}
@@ -37,8 +37,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 onLanguageChange(language.code);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors duration-200 ${
-                selectedLanguage === language.code ? 'bg-blue-50 text-blue-600' : 'text-slate-700'
+              className={`w-full flex items-center gap-4 px-6 py-4 hover:bg-purple-50/80 transition-colors duration-200 ${
+                selectedLanguage === language.code ? 'bg-purple-50/80 text-purple-600' : 'text-slate-700'
               }`}
             >
               <span className="text-xl">{language.flag}</span>
