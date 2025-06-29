@@ -45,18 +45,11 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-600 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-300/30 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-pink-300/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
-      </div>
-
-      <div className="relative z-10 text-center max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="text-center max-w-2xl mx-auto">
         {/* Logo */}
         <div className="mb-12">
-          <div className="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center shadow-2xl">
+          <div className="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center shadow-2xl border border-gray-100">
             <img 
               src="/logo.png" 
               alt="Hero AI" 
@@ -66,8 +59,8 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
         </div>
 
         {/* Main content */}
-        <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-12 border border-white/30">
-          <h2 className="text-4xl font-bold text-white mb-8">
+        <div className="bg-white rounded-3xl p-12 shadow-2xl border border-gray-100">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent mb-8">
             Création en cours...
           </h2>
 
@@ -81,10 +74,10 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
                     key={index}
                     className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${
                       index === currentStep
-                        ? 'bg-white text-emerald-600 scale-110 shadow-lg'
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white scale-110 shadow-lg'
                         : index < currentStep
                         ? 'bg-green-500 text-white'
-                        : 'bg-white/30 text-white/60'
+                        : 'bg-gray-200 text-gray-400'
                     }`}
                   >
                     <Icon size={24} />
@@ -92,20 +85,20 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
                 );
               })}
             </div>
-            <p className="text-xl text-white/90 font-medium">
+            <p className="text-xl text-gray-700 font-medium">
               {steps[currentStep]?.text}
             </p>
           </div>
 
           {/* Progress bar */}
           <div className="mb-8">
-            <div className="w-full h-3 bg-white/30 rounded-full overflow-hidden">
+            <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-white rounded-full transition-all duration-300"
+                className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
-            <p className="text-white/70 mt-3">{progress}%</p>
+            <p className="text-gray-600 mt-3 font-medium">{progress}%</p>
           </div>
 
           {/* Loading animation */}
@@ -113,10 +106,17 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="w-3 h-3 bg-white rounded-full animate-bounce"
+                className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-bounce"
                 style={{ animationDelay: `${i * 0.1}s` }}
               ></div>
             ))}
+          </div>
+
+          {/* Fun fact */}
+          <div className="mt-8 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+            <p className="text-purple-700 text-sm font-medium">
+              ✨ Chaque histoire génère un personnage d'âge et de profession uniques !
+            </p>
           </div>
         </div>
       </div>
