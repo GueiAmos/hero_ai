@@ -1,21 +1,16 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-const IMAGEN_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateImage';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
 
 export interface GeminiResponse {
   candidates: Array<{
     content: {
       parts: Array<{
-        text: string;
+        text?: string;
+        inlineData?: {
+          mimeType: string;
+          data: string;
+        };
       }>;
-    };
-  }>;
-}
-
-export interface ImagenResponse {
-  candidates: Array<{
-    image: {
-      imageUri: string;
     };
   }>;
 }
@@ -257,7 +252,7 @@ Create a simple but exciting story that makes you want to know what happens next
       throw new Error('No story generated');
     }
 
-    return data.candidates[0].content.parts[0].text;
+    return data.candidates[0].content.parts[0].text || '';
   } catch (error) {
     console.error('Error generating story with Gemini:', error);
     throw error;
@@ -329,7 +324,7 @@ Respond only with the title, without quotes.`;
       throw new Error('No title generated');
     }
 
-    return data.candidates[0].content.parts[0].text.trim();
+    return data.candidates[0].content.parts[0].text?.trim() || (language === 'fr' ? `L'Aventure de ${heroName}` : `The Adventure of ${heroName}`);
   } catch (error) {
     console.error('Error generating title with Gemini:', error);
     return language === 'fr' ? `L'Aventure de ${heroName}` : `The Adventure of ${heroName}`;
@@ -337,7 +332,7 @@ Respond only with the title, without quotes.`;
 };
 
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
-  console.log('Attempting to generate image with Gemini Imagen...');
+  console.log('Attempting to generate image with Gemini 2.0 Flash...');
   
   if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_api_key_here') {
     console.warn('Gemini API key not configured, using fallback image');
@@ -351,7 +346,7 @@ export const generateImageWithGemini = async (heroName: string, secretWord: stri
   const ageMatch = storyText.match(/(\d+)\s*ans?/);
   const heroAge = ageMatch ? parseInt(ageMatch[1]) : 20;
   
-  const prompt = `Create a beautiful artistic illustration that shows the main scene from this story.
+  const prompt = `Generate a beautiful artistic illustration that shows the main scene from this story.
 
 STORY ANALYSIS:
 - Main character: ${heroName} (approximately ${heroAge} years old)
@@ -389,51 +384,84 @@ MOOD AND ATMOSPHERE:
 The illustration should make viewers curious about the story and emotionally connect with the character's journey.`;
 
   try {
-    console.log('Making request to Imagen API...');
+    console.log('Making request to Gemini 2.0 Flash API for image generation...');
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
     
-    const response = await fetch(`${IMAGEN_API_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        prompt: [{text:prompt}],
-        config: {
-          responseModalities: ['TEXT', 'IMAGE'], // TEXT est souvent requis même pour les images
-        },
-       
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.8,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 4096,
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "object",
+            properties: {
+              image: {
+                type: "object",
+                properties: {
+                  data: { type: "string" },
+                  mimeType: { type: "string" }
+                }
+              }
+            }
+          }
+        }
       }),
+      signal: controller.signal
     });
 
-    console.log('Imagen API response status:', response.status);
+    console.log('Gemini 2.0 Flash API response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Imagen API error: ${response.status} - ${errorText}`);
+      console.error(`Gemini 2.0 Flash API error: ${response.status} - ${errorText}`);
       clearTimeout(timeoutId);
       return getFallbackImage();
     }
 
-    const data: ImagenResponse = await response.json();
-    console.log('Imagen API response received successfully');
+    const data: GeminiResponse = await response.json();
+    console.log('Gemini 2.0 Flash API response received successfully');
     
     if (!data.candidates || data.candidates.length === 0) {
-      console.warn('No image generated by Imagen API, using fallback');
+      console.warn('No image generated by Gemini 2.0 Flash API, using fallback');
       clearTimeout(timeoutId);
       return getFallbackImage();
     }
 
-    const imageUri = data.candidates[0].image.imageUri;
-    console.log('Generated image URI received');
+    // Chercher une partie avec des données d'image
+    const imagePart = data.candidates[0].content.parts.find(part => part.inlineData);
     
-    clearTimeout(timeoutId);
-    return imageUri;
+    if (imagePart && imagePart.inlineData) {
+      const imageData = imagePart.inlineData.data;
+      const mimeType = imagePart.inlineData.mimeType;
+      
+      // Créer une URL de données pour l'image
+      const imageUrl = `data:${mimeType};base64,${imageData}`;
+      console.log('Generated image data URL created');
+      
+      clearTimeout(timeoutId);
+      return imageUrl;
+    } else {
+      console.warn('No image data found in Gemini 2.0 Flash response, using fallback');
+      clearTimeout(timeoutId);
+      return getFallbackImage();
+    }
     
   } catch (error) {
-    console.error('Error generating image with Gemini Imagen:', error);
+    console.error('Error generating image with Gemini 2.0 Flash:', error);
     return getFallbackImage();
   }
 };
