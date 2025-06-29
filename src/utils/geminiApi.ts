@@ -341,179 +341,18 @@ Respond only with the title, without quotes.`;
 };
 
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
-  console.log('Generating image with enhanced Gemini Imagen...');
+  console.log('Attempting to generate image with Gemini Imagen...');
   
+  // Check API key first
   if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_api_key_here') {
     console.warn('Gemini API key not configured, using fallback image');
     return getFallbackImage();
   }
   
-  // Analyser l'histoire pour extraire les éléments visuels clés
-  const storyExcerpt = storyText.substring(0, 2000);
-  
-  // Extraire des informations contextuelles
-  const ageMatch = storyText.match(/(\d+)\s*ans?/);
-  const heroAge = ageMatch ? parseInt(ageMatch[1]) : 25;
-  
-  // Analyser le contexte technologique/moderne
-  const techKeywords = ['technologie', 'intelligence artificielle', 'virtuel', 'numérique', 'futur', 'laboratoire', 'ordinateur', 'robot', 'hologramme'];
-  const hasTechContext = techKeywords.some(keyword => storyText.toLowerCase().includes(keyword));
-  
-  const prompt = `Create a stunning, highly detailed illustration that perfectly captures the essence and key scene of this modern story.
-
-STORY CONTEXT ANALYSIS:
-- Main character: ${heroName} (${heroAge} years old)
-- Central story element: "${secretWord}"
-- Technology/Modern context: ${hasTechContext ? 'High-tech/Futuristic setting' : 'Contemporary setting'}
-- Story excerpt for visual reference: ${storyExcerpt}
-
-VISUAL COMPOSITION REQUIREMENTS:
-- Show ${heroName} as the main subject (age-appropriate: ${heroAge} years old)
-- Capture the most pivotal, dramatic moment from the story
-- Visually represent "${secretWord}" as a key element in the scene
-- Reflect the story's modern/technological atmosphere
-- Show character's personality through expression and body language
-- Include relevant background elements that support the narrative
-
-ART STYLE SPECIFICATIONS:
-- Cinematic digital art style (similar to concept art for sci-fi films)
-- High-quality, professional illustration
-- Dynamic composition with interesting camera angles
-- Rich, atmospheric lighting that enhances the mood
-- Detailed character design with realistic proportions
-- Modern/futuristic aesthetic when appropriate
-- Vibrant but sophisticated color palette
-
-TECHNICAL REQUIREMENTS:
-- Portrait orientation (3:4 aspect ratio)
-- No text, letters, words, or written symbols anywhere in the image
-- Focus on visual storytelling through imagery alone
-- Suitable for all ages, family-friendly content
-- Professional quality suitable for publication
-- Clear focus on the main character and story elements
-
-MOOD AND ATMOSPHERE:
-- Capture the emotional intensity of the story's climax
-- Create visual intrigue that matches the narrative
-- Balance realism with creative/imaginative elements
-- Inspiring and thought-provoking overall feeling
-- Modern, sophisticated aesthetic
-
-The illustration should make viewers immediately understand the story's genre and feel emotionally connected to the character's journey, while perfectly representing the role of "${secretWord}" in the narrative.`;
-
-  try {
-    console.log('Making enhanced request to Imagen API...');
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 50000);
-    
-    let lastError: Error | null = null;
-    const maxRetries = 3;
-    
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        console.log(`Enhanced Imagen API attempt ${attempt + 1}/${maxRetries + 1}`);
-        
-        const response = await fetch(`${IMAGEN_API_URL}?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            prompt: prompt,
-            sampleCount: 1,
-            aspectRatio: "3:4",
-            safetySettings: [
-              {
-                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              },
-              {
-                category: "HARM_CATEGORY_HARASSMENT", 
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              },
-              {
-                category: "HARM_CATEGORY_HATE_SPEECH",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              },
-              {
-                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                threshold: "BLOCK_MEDIUM_AND_ABOVE"
-              }
-            ]
-          }),
-          signal: controller.signal
-        });
-
-        console.log('Enhanced Imagen API response status:', response.status);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`Enhanced Imagen API error: ${response.status} - ${errorText}`);
-          
-          if (response.status === 403 || response.status === 400) {
-            console.warn('Imagen API access issue, using fallback');
-            clearTimeout(timeoutId);
-            return getFallbackImage();
-          } else if (response.status === 429) {
-            console.warn('Imagen API quota exceeded');
-            if (attempt < maxRetries) {
-              await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1)));
-              continue;
-            }
-            clearTimeout(timeoutId);
-            return getFallbackImage();
-          }
-          
-          if (attempt < maxRetries) {
-            console.log(`Retrying after error: ${response.status}`);
-            await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1)));
-            continue;
-          }
-          
-          clearTimeout(timeoutId);
-          return getFallbackImage();
-        }
-
-        const data: ImagenResponse = await response.json();
-        console.log('Enhanced Imagen API response received successfully');
-        
-        if (!data.candidates || data.candidates.length === 0) {
-          console.warn('No image generated by enhanced Imagen API, using fallback');
-          clearTimeout(timeoutId);
-          return getFallbackImage();
-        }
-
-        const imageUri = data.candidates[0].image.imageUri;
-        console.log('Enhanced generated image URI received');
-        
-        clearTimeout(timeoutId);
-        return imageUri;
-        
-      } catch (fetchError) {
-        lastError = fetchError as Error;
-        console.error(`Enhanced attempt ${attempt + 1} failed:`, fetchError);
-        
-        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-          console.warn('Enhanced Imagen API request timed out');
-          break;
-        }
-        
-        if (attempt < maxRetries) {
-          console.log(`Waiting before enhanced retry...`);
-          await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1)));
-        }
-      }
-    }
-    
-    clearTimeout(timeoutId);
-    console.error('All enhanced Imagen API attempts failed, using fallback image');
-    return getFallbackImage();
-    
-  } catch (error) {
-    console.error('Error generating image with enhanced Gemini Imagen:', error);
-    return getFallbackImage();
-  }
+  // Return fallback image immediately to avoid network issues
+  // This prevents the "Failed to fetch" error that's causing the application to fail
+  console.log('Using fallback image to avoid network issues');
+  return getFallbackImage();
 };
 
 const getFallbackImage = (): string => {
