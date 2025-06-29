@@ -1,6 +1,6 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-const IMAGEN_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:generateImage';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const IMAGEN_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-preview-06-06:generateImage';
 
 export interface GeminiResponse {
   candidates: Array<{
@@ -281,13 +281,6 @@ CRITÈRES POUR LE TITRE:
 - Éviter les formules compliquées
 - Utilise des mots simples et faciles
 
-EXEMPLES DE STYLES MODERNES SIMPLES:
-- "Le Secret de [Concept]"
-- "Projet ${secretWord}"
-- "L'Histoire de [élément]"
-- "Mission [Concept]"
-- "Le Mystère [élément]"
-
 Réponds uniquement avec le titre, sans guillemets.`
     : `Analyze this modern story and create a simple and catchy title that captures its essence.
 
@@ -301,13 +294,6 @@ TITLE CRITERIA:
 - Maximum 5 words
 - Avoid complicated formulas
 - Use simple and easy words
-
-SIMPLE MODERN STYLE EXAMPLES:
-- "The Secret of [Concept]"
-- "Project ${secretWord}"
-- "The Story of [element]"
-- "Mission [Concept]"
-- "The Mystery [element]"
 
 Respond only with the title, without quotes.`;
 
