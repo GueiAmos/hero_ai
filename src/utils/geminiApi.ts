@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = 'AIzaSyCJMWyuvBY7xUO5VHfOpWWlxCdcHpTIsXs';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_TEXT_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
 const GEMINI_IMAGE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:generateImage';
 
@@ -23,6 +23,12 @@ export interface ImagenResponse {
     };
   }>;
 }
+
+const checkApiKey = () => {
+  if (!GEMINI_API_KEY) {
+    throw new Error('VITE_GEMINI_API_KEY is not configured. Please add your Gemini API key to the .env file.');
+  }
+};
 
 const getWordCount = (size: string): string => {
   switch (size) {
@@ -113,6 +119,8 @@ const getRandomSetting = (): string => {
 };
 
 export const generateStoryWithGemini = async (heroName: string, secretWord: string, language: string, size: string): Promise<string> => {
+  checkApiKey();
+  
   const wordCount = getWordCount(size);
   const heroAge = getRandomAge();
   const profession = getRandomProfession(heroAge);
@@ -244,6 +252,7 @@ Create a simple but exciting story that makes you want to know what happens next
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`Gemini API error: ${response.status} - ${errorText}`);
       throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
 
@@ -261,6 +270,8 @@ Create a simple but exciting story that makes you want to know what happens next
 };
 
 export const generateTitleWithGemini = async (heroName: string, secretWord: string, storyContent: string, language: string): Promise<string> => {
+  checkApiKey();
+  
   const prompt = language === 'fr'
     ? `Analyse cette histoire moderne et crée un titre simple et accrocheur qui capture son essence.
 
@@ -314,6 +325,7 @@ Respond only with the title, without quotes.`;
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`Gemini API error: ${response.status} - ${errorText}`);
       throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
 
@@ -331,6 +343,8 @@ Respond only with the title, without quotes.`;
 };
 
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
+  checkApiKey();
+  
   console.log('🎨 Attempting to generate image with Gemini Imagen 3.0...');
   
   // Analyser l'histoire pour extraire les éléments visuels clés
@@ -414,7 +428,7 @@ export const generateImageWithGemini = async (heroName: string, secretWord: stri
       }
       
       clearTimeout(timeoutId);
-      throw new Error(`Gemini Imagen API error: ${response.status}`);
+      throw new Error(`Gemini Imagen API error: ${response.status} - ${errorText}`);
     }
 
     const data: ImagenResponse = await response.json();
