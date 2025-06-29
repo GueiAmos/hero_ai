@@ -1,6 +1,6 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-const IMAGEN_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-preview-06-06:generateImage';
+const IMAGEN_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateImage';
 
 export interface GeminiResponse {
   candidates: Array<{
@@ -400,29 +400,12 @@ The illustration should make viewers curious about the story and emotionally con
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        prompt: prompt,
-        sampleCount: 1,
-        aspectRatio: "3:4",
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HARASSMENT", 
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
+        prompt: [{text:prompt}],
+        config: {
+          responseModalities: ['TEXT', 'IMAGE'], // TEXT est souvent requis même pour les images
+        },
+       
       }),
-      signal: controller.signal
     });
 
     console.log('Imagen API response status:', response.status);
