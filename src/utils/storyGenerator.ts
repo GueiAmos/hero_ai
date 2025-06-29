@@ -1,17 +1,30 @@
 import { StoryData } from '../types';
-import { generateStoryWithGemini, generateTitleWithGemini } from './geminiApi';
+import { generateStoryWithGemini, generateTitleWithGemini, generateImageWithGemini } from './geminiApi';
 import { generateImageWithFreeService } from './freeImageApi';
 
 export const generateStory = async (heroName: string, secretWord: string, language: string, size: string): Promise<StoryData> => {
   try {
+    console.log('🚀 Starting story generation with Gemini APIs...');
+    
     // Generate story text with Gemini
+    console.log('📝 Generating story content...');
     const storyContent = await generateStoryWithGemini(heroName, secretWord, language, size);
     
     // Generate original title based on the story
+    console.log('🏷️ Generating story title...');
     const title = await generateTitleWithGemini(heroName, secretWord, storyContent, language);
     
-    // Generate custom illustration with free services (Pollinations.ai)
-    const imageUrl = await generateImageWithFreeService(heroName, secretWord, storyContent);
+    // Try to generate custom illustration with Gemini Imagen first
+    console.log('🎨 Attempting image generation with Gemini Imagen...');
+    let imageUrl: string;
+    
+    try {
+      imageUrl = await generateImageWithGemini(heroName, secretWord, storyContent);
+      console.log('✅ Gemini Imagen generation successful!');
+    } catch (imageError) {
+      console.warn('⚠️ Gemini Imagen failed, falling back to free service:', imageError);
+      imageUrl = await generateImageWithFreeService(heroName, secretWord, storyContent);
+    }
     
     return {
       heroName,
@@ -23,7 +36,7 @@ export const generateStory = async (heroName: string, secretWord: string, langua
       imageUrl
     };
   } catch (error) {
-    console.error('Error generating story:', error);
+    console.error('❌ Error generating story:', error);
     
     // Fallback to template-based generation if API fails
     return generateFallbackStory(heroName, secretWord, language, size);
@@ -80,7 +93,7 @@ Finally, ${heroName} understands that the true hero isn't the one who possesses 
   const content = templates[0];
   
   const title = language === 'fr' ? `Le Secret du ${secretWord} Numérique` : `The Secret of the Digital ${secretWord}`;
-  const imageUrl = `https://picsum.photos/800/600?random=${Date.now()}`;
+  const imageUrl = `https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=1000&fit=crop&auto=format&q=80`;
   
   return {
     heroName,

@@ -3,6 +3,7 @@ import { RotateCcw, Download, RefreshCw, Sparkles, ArrowLeft, Share2 } from 'luc
 import { StoryData } from '../types';
 import { translations, Language } from '../i18n/translations';
 import { generatePDF } from '../utils/pdfGenerator';
+import { generateImageWithGemini } from '../utils/geminiApi';
 import { generateImageWithFreeService } from '../utils/freeImageApi';
 
 interface StoryScreenProps {
@@ -32,16 +33,30 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
     setImageError(false);
     
     try {
-      const newImageUrl = await generateImageWithFreeService(
+      // Try Gemini Imagen first
+      console.log('🎨 Attempting Gemini Imagen generation...');
+      const newImageUrl = await generateImageWithGemini(
         storyData.heroName, 
         storyData.secretWord, 
         storyData.content
       );
-      console.log('✅ New image generated:', newImageUrl);
+      console.log('✅ Gemini Imagen generation successful:', newImageUrl);
       setCurrentImageUrl(newImageUrl);
-    } catch (error) {
-      console.error('❌ Error regenerating image:', error);
-      setImageError(true);
+    } catch (geminiError) {
+      console.warn('⚠️ Gemini Imagen failed, trying fallback service:', geminiError);
+      
+      try {
+        const fallbackImageUrl = await generateImageWithFreeService(
+          storyData.heroName, 
+          storyData.secretWord, 
+          storyData.content
+        );
+        console.log('✅ Fallback image generation successful:', fallbackImageUrl);
+        setCurrentImageUrl(fallbackImageUrl);
+      } catch (fallbackError) {
+        console.error('❌ All image generation methods failed:', fallbackError);
+        setImageError(true);
+      }
     } finally {
       setIsRegeneratingImage(false);
     }
@@ -124,7 +139,8 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
                     <div className="w-full h-80 lg:h-96 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
                       <div className="text-center">
                         <RefreshCw size={48} className="animate-spin text-purple-500 mx-auto mb-4" />
-                        <p className="text-purple-700 font-medium">Génération en cours...</p>
+                        <p className="text-purple-700 font-medium">Génération avec Gemini Imagen...</p>
+                        <p className="text-purple-600 text-sm mt-2">Création d'une illustration unique</p>
                       </div>
                     </div>
                   ) : (
@@ -142,6 +158,12 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
                       {imageError && (
                         <div className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
                           Image de secours
+                        </div>
+                      )}
+                      {currentImageUrl.includes('googleapis.com') && (
+                        <div className="absolute top-2 left-2 bg-green-100 text-green-800 px-2 py-1 rounded text-xs flex items-center gap-1">
+                          <Sparkles size={12} />
+                          Gemini AI
                         </div>
                       )}
                     </>
@@ -216,7 +238,7 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 inline-block border border-gray-100 shadow-lg">
             <p className="flex items-center justify-center gap-2 text-gray-600">
               <Sparkles size={18} className="text-purple-500" />
-              Généré avec ❤️ par Hero AI
+              Généré avec ❤️ par Hero AI • Powered by Gemini
             </p>
           </div>
         </div>
