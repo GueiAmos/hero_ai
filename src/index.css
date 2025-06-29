@@ -38,13 +38,13 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3b82f6, #f97316);
+  background: linear-gradient(to bottom, #10b981, #06b6d4, #3b82f6);
   border-radius: 8px;
   border: 2px solid #f8fafc;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #2563eb, #ea580c);
+  background: linear-gradient(to bottom, #059669, #0891b2, #2563eb);
 }
 
 /* Default scrollbar styling */
@@ -58,12 +58,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3b82f6, #f97316);
+  background: linear-gradient(to bottom, #10b981, #06b6d4);
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #2563eb, #ea580c);
+  background: linear-gradient(to bottom, #059669, #0891b2);
 }
 
 /* Animation improvements */
@@ -112,11 +112,11 @@ body {
 
 /* Enhanced button styles */
 .btn-primary {
-  @apply bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  @apply bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 hover:from-emerald-600 hover:via-cyan-600 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
 }
 
 .btn-secondary {
-  @apply bg-white/90 hover:bg-white text-slate-700 font-bold py-4 px-6 rounded-2xl border-2 border-blue-300 hover:border-blue-400 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm;
+  @apply bg-white/90 hover:bg-white text-slate-700 font-bold py-4 px-6 rounded-2xl border-2 border-emerald-300 hover:border-emerald-400 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm;
 }
 
 /* Card styles */
@@ -126,7 +126,7 @@ body {
 
 /* Input styles */
 .input-field {
-  @apply w-full px-6 py-5 rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg font-medium bg-white/90 backdrop-blur-sm border-slate-300 focus:border-blue-400;
+  @apply w-full px-6 py-5 rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-200 text-lg font-medium bg-white/90 backdrop-blur-sm border-slate-300 focus:border-emerald-400;
 }
 
 /* Glass morphism effect */
@@ -163,24 +163,24 @@ body {
   float: left;
   line-height: 0.8;
   margin: 0.1em 0.1em 0 0;
-  background: linear-gradient(135deg, #3b82f6, #f97316);
+  background: linear-gradient(135deg, #10b981, #06b6d4, #3b82f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 /* Gradient text utilities */
-.gradient-text-blue {
-  @apply bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent;
+.gradient-text-emerald {
+  @apply bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent;
 }
 
 /* Custom animations */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
   }
   50% {
-    box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
   }
 }
 
@@ -195,4 +195,17 @@ body {
 
 .backdrop-blur-2xl {
   backdrop-filter: blur(40px);
+}
+
+/* Fun color animations */
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-rainbow {
+  background: linear-gradient(-45deg, #10b981, #06b6d4, #3b82f6, #8b5cf6, #ec4899);
+  background-size: 400% 400%;
+  animation: rainbow 3s ease infinite;
 }

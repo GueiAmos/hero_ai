@@ -45,28 +45,28 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-orange-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-600 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-orange-500/10 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-500/5 to-orange-500/5 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-300/30 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-pink-300/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
       </div>
 
       <div className="relative z-10 text-center max-w-2xl mx-auto">
         {/* Logo */}
         <div className="mb-12">
-          <div className="w-32 h-32 mx-auto bg-gradient-to-r from-blue-600 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+          <div className="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center shadow-2xl">
             <img 
               src="/logo.png" 
               alt="Hero AI" 
-              className="w-20 h-20 object-contain filter brightness-0 invert"
+              className="w-20 h-20 object-contain"
             />
           </div>
         </div>
 
         {/* Main content */}
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 border border-white/20">
+        <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-12 border border-white/30">
           <h2 className="text-4xl font-bold text-white mb-8">
             Création en cours...
           </h2>
@@ -81,10 +81,10 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
                     key={index}
                     className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 ${
                       index === currentStep
-                        ? 'bg-gradient-to-r from-blue-500 to-orange-500 text-white scale-110 shadow-lg'
+                        ? 'bg-white text-emerald-600 scale-110 shadow-lg'
                         : index < currentStep
                         ? 'bg-green-500 text-white'
-                        : 'bg-white/20 text-white/60'
+                        : 'bg-white/30 text-white/60'
                     }`}
                   >
                     <Icon size={24} />
@@ -99,9 +99,9 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
 
           {/* Progress bar */}
           <div className="mb-8">
-            <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden">
+            <div className="w-full h-3 bg-white/30 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-gradient-to-r from-blue-500 to-orange-500 rounded-full transition-all duration-300"
+                className="h-full bg-white rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
@@ -113,7 +113,7 @@ export const GeneratingScreen: React.FC<GeneratingScreenProps> = ({ selectedLang
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="w-3 h-3 bg-gradient-to-r from-blue-500 to-orange-500 rounded-full animate-bounce"
+                className="w-3 h-3 bg-white rounded-full animate-bounce"
                 style={{ animationDelay: `${i * 0.1}s` }}
               ></div>
             ))}

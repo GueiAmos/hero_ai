@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = 'AIzaSyCJMWyuvBY7xUO5VHfOpWWlxCdcHpTIsXs';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
 
 export interface GeminiResponse {
@@ -103,15 +103,7 @@ const getRandomSetting = (): string => {
   return settings[Math.floor(Math.random() * settings.length)];
 };
 
-const checkApiKey = (): void => {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_api_key_here') {
-    throw new Error('Gemini API key is not configured. Please add your API key to the .env file.');
-  }
-};
-
 export const generateStoryWithGemini = async (heroName: string, secretWord: string, language: string, size: string): Promise<string> => {
-  checkApiKey();
-  
   const wordCount = getWordCount(size);
   const heroAge = getRandomAge();
   const profession = getRandomProfession(heroAge);
@@ -260,8 +252,6 @@ Create a simple but exciting story that makes you want to know what happens next
 };
 
 export const generateTitleWithGemini = async (heroName: string, secretWord: string, storyContent: string, language: string): Promise<string> => {
-  checkApiKey();
-  
   const prompt = language === 'fr'
     ? `Analyse cette histoire moderne et crée un titre simple et accrocheur qui capture son essence.
 
@@ -334,11 +324,6 @@ Respond only with the title, without quotes.`;
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
   console.log('Attempting to generate image with Gemini 2.0 Flash...');
   
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_api_key_here') {
-    console.warn('Gemini API key not configured, using fallback image');
-    return getFallbackImage();
-  }
-  
   // Analyser l'histoire pour extraire les éléments visuels clés
   const storyExcerpt = storyText.substring(0, 1500);
   
@@ -346,42 +331,24 @@ export const generateImageWithGemini = async (heroName: string, secretWord: stri
   const ageMatch = storyText.match(/(\d+)\s*ans?/);
   const heroAge = ageMatch ? parseInt(ageMatch[1]) : 20;
   
-  const prompt = `Generate a beautiful artistic illustration that shows the main scene from this story.
+  const prompt = `Generate a beautiful artistic illustration for this story. Create an image that shows the main character and the key scene.
 
-STORY ANALYSIS:
-- Main character: ${heroName} (approximately ${heroAge} years old)
-- Central element: "${secretWord}"
-- Story excerpt: ${storyExcerpt}
+STORY DETAILS:
+- Main character: ${heroName} (${heroAge} years old)
+- Key element: "${secretWord}"
+- Story: ${storyExcerpt}
 
-VISUAL COMPOSITION:
-- Show ${heroName} as the main focus, age-appropriate appearance (${heroAge} years old)
-- Capture the most important moment from the story
-- Include visual elements that represent "${secretWord}" in the scene
-- Create an atmosphere that matches the story's mood and setting
-- Show the character's personality through body language and expression
+IMAGE REQUIREMENTS:
+- Show ${heroName} as the main character (age ${heroAge})
+- Include visual elements related to "${secretWord}"
+- Modern, colorful, anime-style illustration
+- High quality and detailed
+- Suitable for all ages
+- No text or words in the image
+- Portrait orientation (3:4 ratio)
+- Vibrant colors and engaging composition
 
-ART STYLE REQUIREMENTS:
-- High-quality anime/manga illustration style
-- Cinematic composition with dynamic angles
-- Rich, vibrant colors that enhance the mood
-- Detailed background that supports the narrative
-- Professional character design with expressive features
-- Magical or dramatic lighting effects
-
-TECHNICAL SPECIFICATIONS:
-- Portrait orientation (3:4 aspect ratio)
-- No text, letters, words, or written symbols anywhere
-- Focus on visual storytelling through imagery alone
-- Suitable for all ages, family-friendly content
-- High artistic quality with attention to detail
-
-MOOD AND ATMOSPHERE:
-- Capture the emotional core of the story
-- Create visual intrigue and wonder
-- Balance realism with fantastical elements
-- Inspiring and uplifting overall feeling
-
-The illustration should make viewers curious about the story and emotionally connect with the character's journey.`;
+Create a stunning illustration that captures the essence of this story!`;
 
   try {
     console.log('Making request to Gemini 2.0 Flash API for image generation...');
@@ -405,19 +372,6 @@ The illustration should make viewers curious about the story and emotionally con
           topK: 40,
           topP: 0.95,
           maxOutputTokens: 4096,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              image: {
-                type: "object",
-                properties: {
-                  data: { type: "string" },
-                  mimeType: { type: "string" }
-                }
-              }
-            }
-          }
         }
       }),
       signal: controller.signal
