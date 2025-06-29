@@ -3,7 +3,7 @@ import { RotateCcw, Download, RefreshCw, Sparkles, ArrowLeft, Share2 } from 'luc
 import { StoryData } from '../types';
 import { translations, Language } from '../i18n/translations';
 import { generatePDF } from '../utils/pdfGenerator';
-import { generateImageWithFreeService } from './freeImageApi';
+import { generateImageWithFreeService } from '../utils/freeImageApi';
 
 interface StoryScreenProps {
   storyData: StoryData;
