@@ -2,50 +2,147 @@ import { StoryData } from '../types';
 
 export const generatePDF = async (storyData: StoryData): Promise<void> => {
   try {
-    // Create a blob with the HTML content
-    const htmlContent = createPDFHTML(storyData);
+    // Import jsPDF dynamically
+    const { jsPDF } = await import('jspdf');
     
-    // Create a temporary link element
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
+    // Create new PDF document
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Set up fonts and styling
+    pdf.setFont('helvetica');
     
-    // Open in new window for printing
-    const printWindow = window.open(url, '_blank', 'width=800,height=600');
+    // Add title
+    pdf.setFontSize(24);
+    pdf.setTextColor(30, 58, 138); // Blue color
+    const titleLines = pdf.splitTextToSize(storyData.title, 170);
+    pdf.text(titleLines, 20, 30);
     
-    if (!printWindow) {
-      // Fallback: download as HTML file if popup is blocked
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${storyData.title.replace(/[^a-zA-Z0-9]/g, '_')}.html`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      return;
+    // Add subtitle
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Généré par Hero AI', 20, 45);
+    
+    // Add story details
+    pdf.setFontSize(10);
+    pdf.setTextColor(60, 60, 60);
+    pdf.text(`Héros: ${storyData.heroName} | Mot magique: ${storyData.secretWord}`, 20, 55);
+    
+    // Add image if available
+    if (storyData.imageUrl && !storyData.imageUrl.includes('unsplash')) {
+      try {
+        // For generated images, we'll add a placeholder
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(20, 65, 80, 60, 'F');
+        pdf.setFontSize(8);
+        pdf.setTextColor(120, 120, 120);
+        pdf.text('Illustration générée', 45, 95);
+      } catch (imageError) {
+        console.log('Could not add image to PDF');
+      }
     }
-
-    // Wait for the window to load, then trigger print
-    printWindow.onload = () => {
-      setTimeout(() => {
-        printWindow.print();
-        // Close window after printing (user can cancel)
-        setTimeout(() => {
-          printWindow.close();
-          URL.revokeObjectURL(url);
-        }, 1000);
-      }, 500);
-    };
-
-  } catch (error) {
-    console.error('Error generating PDF:', error);
     
-    // Ultimate fallback: copy text to clipboard
+    // Add story content
+    pdf.setFontSize(11);
+    pdf.setTextColor(40, 40, 40);
+    
+    const startY = storyData.imageUrl && !storyData.imageUrl.includes('unsplash') ? 140 : 70;
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 20;
+    const lineHeight = 6;
+    let currentY = startY;
+    
+    // Split content into paragraphs
+    const paragraphs = storyData.content.split('\n\n').filter(p => p.trim());
+    
+    paragraphs.forEach((paragraph, index) => {
+      if (paragraph.trim()) {
+        // Check if we need a new page
+        if (currentY > pageHeight - 40) {
+          pdf.addPage();
+          currentY = 30;
+        }
+        
+        // Add paragraph spacing
+        if (index > 0) {
+          currentY += 4;
+        }
+        
+        // Split paragraph into lines that fit the page width
+        const lines = pdf.splitTextToSize(paragraph.trim(), 170);
+        
+        lines.forEach((line: string) => {
+          if (currentY > pageHeight - 30) {
+            pdf.addPage();
+            currentY = 30;
+          }
+          
+          pdf.text(line, margin, currentY);
+          currentY += lineHeight;
+        });
+      }
+    });
+    
+    // Add footer
+    const totalPages = pdf.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(8);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text(`Page ${i} sur ${totalPages}`, 170, pageHeight - 10);
+      pdf.text('Hero AI - Générateur d\'histoires', 20, pageHeight - 10);
+    }
+    
+    // Save the PDF
+    const fileName = `${storyData.title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+    pdf.save(fileName);
+    
+  } catch (error) {
+    console.error('Error generating PDF with jsPDF:', error);
+    
+    // Fallback to HTML method
     try {
-      const textContent = `${storyData.title}\n\n${storyData.content}\n\n---\nGénéré par Hero AI\nHéros: ${storyData.heroName} | Mot magique: ${storyData.secretWord}`;
-      await navigator.clipboard.writeText(textContent);
-      alert('Le contenu de l\'histoire a été copié dans le presse-papiers !');
-    } catch (clipboardError) {
-      alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+      const htmlContent = createPDFHTML(storyData);
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      
+      const printWindow = window.open(url, '_blank', 'width=800,height=600');
+      
+      if (!printWindow) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${storyData.title.replace(/[^a-zA-Z0-9]/g, '_')}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print();
+          setTimeout(() => {
+            printWindow.close();
+            URL.revokeObjectURL(url);
+          }, 1000);
+        }, 500);
+      };
+
+    } catch (fallbackError) {
+      console.error('Fallback PDF generation failed:', fallbackError);
+      
+      // Ultimate fallback: copy to clipboard
+      try {
+        const textContent = `${storyData.title}\n\n${storyData.content}\n\n---\nGénéré par Hero AI\nHéros: ${storyData.heroName} | Mot magique: ${storyData.secretWord}`;
+        await navigator.clipboard.writeText(textContent);
+        alert('Le contenu de l\'histoire a été copié dans le presse-papiers !');
+      } catch (clipboardError) {
+        alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+      }
     }
   }
 };
@@ -59,7 +156,7 @@ const createPDFHTML = (storyData: StoryData): string => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${storyData.title}</title>
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
         * {
           margin: 0;
@@ -68,142 +165,83 @@ const createPDFHTML = (storyData: StoryData): string => {
         }
         
         body {
-          font-family: 'Crimson Text', Georgia, serif;
-          line-height: 1.8;
+          font-family: 'Inter', Arial, sans-serif;
+          line-height: 1.7;
           color: #1e293b;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-          min-height: 100vh;
-        }
-        
-        .container {
+          background: white;
+          padding: 40px;
           max-width: 800px;
           margin: 0 auto;
-          padding: 40px;
-          background: white;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-          min-height: 100vh;
         }
         
         .header {
           text-align: center;
-          margin-bottom: 50px;
-          padding-bottom: 30px;
-          border-bottom: 3px solid #4f46e5;
-          position: relative;
-        }
-        
-        .header::after {
-          content: '';
-          position: absolute;
-          bottom: -6px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 100px;
-          height: 3px;
-          background: linear-gradient(90deg, #4f46e5, #3b82f6, #f59e0b);
+          margin-bottom: 40px;
+          padding-bottom: 20px;
+          border-bottom: 2px solid #3b82f6;
         }
         
         .title {
-          font-size: 2.5rem;
-          font-weight: 600;
-          background: linear-gradient(135deg, #4f46e5, #3b82f6, #f59e0b);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          margin-bottom: 15px;
+          font-size: 2.2rem;
+          font-weight: 700;
+          color: #1e40af;
+          margin-bottom: 10px;
           line-height: 1.2;
         }
         
         .subtitle {
-          font-size: 1.2rem;
+          font-size: 1rem;
           color: #64748b;
-          font-style: italic;
           font-weight: 400;
         }
         
-        .image-container {
-          text-align: center;
-          margin: 40px 0;
-        }
-        
-        .story-image {
-          max-width: 100%;
-          width: 600px;
-          height: 400px;
-          object-fit: cover;
-          border-radius: 20px;
-          box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-          border: 4px solid #f8fafc;
+        .story-details {
+          background: #f8fafc;
+          padding: 15px;
+          border-radius: 8px;
+          margin: 20px 0;
+          border-left: 4px solid #f97316;
+          font-size: 0.9rem;
+          color: #475569;
         }
         
         .story-content {
           font-size: 1.1rem;
-          line-height: 2;
+          line-height: 1.8;
           text-align: justify;
-          text-indent: 2em;
           color: #374151;
-          margin: 40px 0;
+          margin: 30px 0;
         }
         
         .story-content p {
-          margin-bottom: 1.5em;
+          margin-bottom: 1.2em;
         }
         
-        .story-content::first-letter {
-          font-size: 4em;
-          font-weight: 600;
+        .story-content p:first-of-type::first-letter {
+          font-size: 3.5em;
+          font-weight: 700;
           float: left;
           line-height: 0.8;
           margin: 0.1em 0.1em 0 0;
-          color: #4f46e5;
+          color: #1e40af;
         }
         
         .footer {
-          margin-top: 60px;
-          padding-top: 30px;
-          border-top: 2px solid #e5e7eb;
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid #e5e7eb;
           text-align: center;
           color: #6b7280;
-          font-size: 0.95rem;
-        }
-        
-        .footer-title {
-          font-size: 1.1rem;
-          color: #4f46e5;
-          font-weight: 600;
-          margin-bottom: 10px;
-        }
-        
-        .story-details {
-          background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-          padding: 20px;
-          border-radius: 15px;
-          margin-top: 20px;
-          border-left: 5px solid #4f46e5;
-        }
-        
-        .detail-item {
-          margin: 8px 0;
-          font-weight: 500;
-        }
-        
-        .detail-label {
-          color: #4f46e5;
-          font-weight: 600;
+          font-size: 0.9rem;
         }
         
         @media print {
           body {
-            background: white;
-          }
-          
-          .container {
-            box-shadow: none;
             padding: 20px;
           }
           
-          .story-image {
-            max-height: 300px;
+          .header {
+            margin-bottom: 30px;
           }
         }
         
@@ -214,40 +252,25 @@ const createPDFHTML = (storyData: StoryData): string => {
       </style>
     </head>
     <body>
-      <div class="container">
-        <div class="header">
-          <h1 class="title">${storyData.title}</h1>
-          <p class="subtitle">Une aventure générée par Hero AI</p>
-        </div>
-        
-        <div class="image-container">
-          <img src="${storyData.imageUrl}" alt="Illustration de l'histoire" class="story-image" 
-               onerror="this.style.display='none'" />
-        </div>
-        
-        <div class="story-content">
-          ${storyData.content.split('\n\n').map(paragraph => 
-            paragraph.trim() ? `<p>${paragraph.trim()}</p>` : ''
-          ).join('')}
-        </div>
-        
-        <div class="footer">
-          <div class="footer-title">✨ Généré avec ❤️ par Hero AI ✨</div>
-          <div class="story-details">
-            <div class="detail-item">
-              <span class="detail-label">Héros :</span> ${storyData.heroName}
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Mot magique :</span> ${storyData.secretWord}
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Taille :</span> ${storyData.size}
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Langue :</span> ${storyData.language === 'fr' ? 'Français' : 'English'}
-            </div>
-          </div>
-        </div>
+      <div class="header">
+        <h1 class="title">${storyData.title}</h1>
+        <p class="subtitle">Une aventure générée par Hero AI</p>
+      </div>
+      
+      <div class="story-details">
+        <strong>Héros:</strong> ${storyData.heroName} | 
+        <strong>Mot magique:</strong> ${storyData.secretWord} | 
+        <strong>Taille:</strong> ${storyData.size}
+      </div>
+      
+      <div class="story-content">
+        ${storyData.content.split('\n\n').map(paragraph => 
+          paragraph.trim() ? `<p>${paragraph.trim()}</p>` : ''
+        ).join('')}
+      </div>
+      
+      <div class="footer">
+        <p>✨ Généré avec Hero AI ✨</p>
       </div>
     </body>
     </html>
