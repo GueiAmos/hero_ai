@@ -22,11 +22,11 @@ export interface ImagenResponse {
 
 const getWordCount = (size: string): string => {
   switch (size) {
-    case 'small': return '500-700';
-    case 'medium': return '800-1200';
-    case 'long': return '1300-1800';
-    case 'veryLong': return '2000-2800';
-    default: return '800-1200';
+    case 'small': return '300-500';
+    case 'medium': return '600-900';
+    case 'long': return '1000-1400';
+    case 'veryLong': return '1500-2000';
+    default: return '600-900';
   }
 };
 
@@ -52,17 +52,17 @@ const getRandomAge = (): number => {
 
 const getRandomProfession = (age: number): string => {
   if (age <= 12) {
-    return ['élève de primaire', 'enfant curieux', 'petit explorateur', 'jeune inventeur', 'apprenti magicien', 'collectionneur de trésors'][Math.floor(Math.random() * 6)];
+    return ['élève', 'enfant curieux', 'petit explorateur', 'jeune inventeur', 'apprenti magicien', 'collectionneur'][Math.floor(Math.random() * 6)];
   } else if (age <= 17) {
-    return ['lycéen', 'étudiante au collège', 'apprenti mécanicien', 'jeune artiste', 'sportif amateur', 'musicienne débutante', 'passionné de sciences', 'créateur de contenu'][Math.floor(Math.random() * 8)];
+    return ['lycéen', 'étudiante', 'apprenti', 'jeune artiste', 'sportif', 'musicienne', 'passionné de sciences', 'créateur'][Math.floor(Math.random() * 8)];
   } else if (age <= 25) {
-    return ['étudiant en université', 'stagiaire en entreprise', 'jeune entrepreneur', 'artiste indépendant', 'développeur junior', 'journaliste débutant', 'designer graphique', 'photographe freelance', 'coach sportif', 'influenceur'][Math.floor(Math.random() * 10)];
+    return ['étudiant', 'stagiaire', 'jeune entrepreneur', 'artiste', 'développeur', 'journaliste', 'designer', 'photographe', 'coach', 'influenceur'][Math.floor(Math.random() * 10)];
   } else if (age <= 35) {
-    return ['ingénieur logiciel', 'professeur', 'médecin généraliste', 'architecte', 'chef cuisinier', 'consultant', 'avocat junior', 'psychologue', 'vétérinaire', 'pilote', 'chercheur', 'entrepreneur'][Math.floor(Math.random() * 12)];
+    return ['ingénieur', 'professeur', 'médecin', 'architecte', 'chef cuisinier', 'consultant', 'avocat', 'psychologue', 'vétérinaire', 'pilote', 'chercheur', 'entrepreneur'][Math.floor(Math.random() * 12)];
   } else if (age <= 50) {
-    return ['directeur commercial', 'chirurgien', 'professeur universitaire', 'architecte senior', 'chef étoilé', 'consultant expert', 'avocat associé', 'psychologue clinicien', 'vétérinaire spécialisé', 'commandant de bord', 'directeur de recherche'][Math.floor(Math.random() * 11)];
+    return ['directeur', 'chirurgien', 'professeur expert', 'architecte senior', 'chef étoilé', 'consultant expert', 'avocat associé', 'psychologue expert', 'vétérinaire spécialisé', 'commandant', 'directeur de recherche'][Math.floor(Math.random() * 11)];
   } else {
-    return ['expert-conseil', 'professeur émérite', 'médecin-chef', 'maître architecte', 'critique gastronomique', 'mentor d\'entreprise', 'juge', 'thérapeute expérimenté', 'directeur de clinique vétérinaire', 'instructeur de vol', 'scientifique renommé'][Math.floor(Math.random() * 11)];
+    return ['expert-conseil', 'professeur émérite', 'médecin-chef', 'maître architecte', 'critique', 'mentor', 'juge', 'thérapeute expert', 'directeur de clinique', 'instructeur', 'scientifique renommé'][Math.floor(Math.random() * 11)];
   }
 };
 
@@ -89,14 +89,14 @@ const getRandomPersonality = (): string => {
 
 const getRandomSetting = (): string => {
   const settings = [
-    'une métropole futuriste aux gratte-ciels lumineux',
+    'une ville moderne aux buildings lumineux',
     'une petite ville côtière aux maisons colorées',
     'un campus universitaire verdoyant',
-    'une forêt mystérieuse aux arbres centenaires',
-    'un laboratoire de recherche ultra-moderne',
-    'un quartier artistique plein de street art',
+    'une forêt mystérieuse aux arbres anciens',
+    'un laboratoire de recherche moderne',
+    'un quartier artistique plein de couleurs',
     'une station spatiale en orbite',
-    'un village de montagne isolé',
+    'un village de montagne paisible',
     'une île tropicale paradisiaque',
     'un centre-ville animé et cosmopolite',
     'une base sous-marine secrète',
@@ -124,7 +124,7 @@ export const generateStoryWithGemini = async (heroName: string, secretWord: stri
   const setting = getRandomSetting();
   
   const prompt = language === 'fr' 
-    ? `Écris une histoire captivante, moderne et originale qui sort des sentiers battus.
+    ? `Écris une histoire simple, captivante et moderne qui sort des sentiers battus.
 
 PERSONNAGE PRINCIPAL:
 - Nom: ${heroName}
@@ -133,34 +133,37 @@ PERSONNAGE PRINCIPAL:
 - Personnalité: ${personality}
 - Lieu principal: ${setting}
 
-ÉLÉMENT CENTRAL: "${secretWord}" doit être au cœur de l'intrigue de manière créative et inattendue. Ce n'est pas juste un objet mentionné, mais l'élément déclencheur de toute l'aventure.
+ÉLÉMENT CENTRAL: "${secretWord}" doit être au cœur de l'intrigue de manière créative et surprenante. Ce n'est pas juste un objet mentionné, mais l'élément qui déclenche toute l'aventure.
 
 EXIGENCES CRÉATIVES STRICTES:
 - Histoire de ${wordCount} mots environ
+- Utilise un vocabulaire SIMPLE et FACILE à comprendre
+- Évite les mots compliqués ou techniques
+- Phrases courtes et claires
 - INTERDICTION absolue des clichés fantasy (pas de dragons, sorciers, royaumes magiques)
-- Univers contemporain ou futuriste avec des enjeux actuels
-- Intégrer la technologie moderne (IA, réalité virtuelle, biotechnologie, etc.)
-- Créer des situations uniques jamais vues
-- Développer des personnages secondaires mémorables
-- Inclure des rebondissements surprenants
-- Aborder des thèmes profonds (identité, liberté, progrès, humanité)
+- Univers contemporain ou futuriste avec des situations du quotidien
+- Intégrer la technologie moderne de façon simple (téléphones, ordinateurs, internet, etc.)
+- Créer des situations uniques mais compréhensibles
+- Développer des personnages attachants et simples
+- Inclure des rebondissements surprenants mais logiques
+- Aborder des thèmes simples (amitié, famille, découverte, courage)
 
-THÈMES MODERNES À EXPLORER:
-- Intelligence artificielle et conscience
-- Réalité virtuelle vs réalité
-- Biotechnologie et amélioration humaine
-- Écologie et durabilité
-- Diversité culturelle et inclusion
-- Innovation technologique
-- Éthique scientifique
-- Connexions humaines à l'ère numérique
+THÈMES MODERNES SIMPLES À EXPLORER:
+- Technologie et vie quotidienne
+- Réseaux sociaux et connexions
+- Écologie et nature
+- Diversité et inclusion
+- Innovation simple
+- Relations humaines
+- Découverte de soi
+- Entraide et solidarité
 
 STYLE NARRATIF:
-- Ton moderne, dynamique et engageant
-- Dialogues naturels et percutants
-- Descriptions immersives et détaillées
-- Rythme soutenu avec des moments de réflexion
-- Fin ouverte qui fait réfléchir
+- Ton moderne, simple et engageant
+- Dialogues naturels et faciles
+- Descriptions simples mais vivantes
+- Rythme dynamique qui donne envie de connaître la suite
+- Fin satisfaisante qui fait sourire
 
 INTERDICTIONS:
 - Pas de magie traditionnelle
@@ -168,9 +171,10 @@ INTERDICTIONS:
 - Pas de quête classique
 - Pas de "il était une fois"
 - Pas de monde médiéval
+- Pas de mots compliqués ou techniques
 
-Crée une histoire qui pourrait être adaptée en film de science-fiction moderne !`
-    : `Write a captivating, modern and original story that breaks new ground.
+Crée une histoire simple mais passionnante qui donne envie de connaître la suite !`
+    : `Write a simple, captivating and modern story that breaks new ground.
 
 MAIN CHARACTER:
 - Name: ${heroName}
@@ -179,34 +183,37 @@ MAIN CHARACTER:
 - Personality: ${personality}
 - Main setting: ${setting}
 
-CENTRAL ELEMENT: "${secretWord}" must be at the heart of the plot in a creative and unexpected way. It's not just a mentioned object, but the trigger for the entire adventure.
+CENTRAL ELEMENT: "${secretWord}" must be at the heart of the plot in a creative and surprising way. It's not just a mentioned object, but the element that triggers the entire adventure.
 
 STRICT CREATIVE REQUIREMENTS:
 - Story of approximately ${wordCount} words
+- Use SIMPLE and EASY to understand vocabulary
+- Avoid complicated or technical words
+- Short and clear sentences
 - ABSOLUTE PROHIBITION of fantasy clichés (no dragons, wizards, magical kingdoms)
-- Contemporary or futuristic universe with current issues
-- Integrate modern technology (AI, virtual reality, biotechnology, etc.)
-- Create unique situations never seen before
-- Develop memorable secondary characters
-- Include surprising plot twists
-- Address deep themes (identity, freedom, progress, humanity)
+- Contemporary or futuristic universe with everyday situations
+- Integrate modern technology in a simple way (phones, computers, internet, etc.)
+- Create unique but understandable situations
+- Develop endearing and simple characters
+- Include surprising but logical plot twists
+- Address simple themes (friendship, family, discovery, courage)
 
-MODERN THEMES TO EXPLORE:
-- Artificial intelligence and consciousness
-- Virtual reality vs reality
-- Biotechnology and human enhancement
-- Ecology and sustainability
-- Cultural diversity and inclusion
-- Technological innovation
-- Scientific ethics
-- Human connections in the digital age
+SIMPLE MODERN THEMES TO EXPLORE:
+- Technology and daily life
+- Social networks and connections
+- Ecology and nature
+- Diversity and inclusion
+- Simple innovation
+- Human relationships
+- Self-discovery
+- Mutual aid and solidarity
 
 NARRATIVE STYLE:
-- Modern, dynamic and engaging tone
-- Natural and impactful dialogue
-- Immersive and detailed descriptions
-- Sustained pace with moments of reflection
-- Open ending that makes you think
+- Modern, simple and engaging tone
+- Natural and easy dialogue
+- Simple but vivid descriptions
+- Dynamic pace that makes you want to know what happens next
+- Satisfying ending that makes you smile
 
 PROHIBITIONS:
 - No traditional magic
@@ -214,8 +221,9 @@ PROHIBITIONS:
 - No classic quest
 - No "once upon a time"
 - No medieval world
+- No complicated or technical words
 
-Create a story that could be adapted into a modern science fiction film!`;
+Create a simple but exciting story that makes you want to know what happens next!`;
 
   try {
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
@@ -260,44 +268,46 @@ export const generateTitleWithGemini = async (heroName: string, secretWord: stri
   checkApiKey();
   
   const prompt = language === 'fr'
-    ? `Analyse cette histoire moderne et crée un titre accrocheur qui capture son essence futuriste.
+    ? `Analyse cette histoire moderne et crée un titre simple et accrocheur qui capture son essence.
 
 HISTOIRE: ${storyContent.substring(0, 1200)}...
 
 CRITÈRES POUR LE TITRE:
-- Style moderne et technologique
+- Style moderne et simple
 - Évoque l'innovation et le futur
 - Fait référence subtilement au concept de "${secretWord}"
 - Suscite la curiosité sans tout révéler
-- Maximum 6 mots
-- Éviter les formules banales
+- Maximum 5 mots
+- Éviter les formules compliquées
+- Utilise des mots simples et faciles
 
-EXEMPLES DE STYLES MODERNES:
-- "Code [Concept]"
+EXEMPLES DE STYLES MODERNES SIMPLES:
+- "Le Secret de [Concept]"
 - "Projet ${secretWord}"
-- "L'Algorithme de [élément]"
-- "Nexus [Concept]"
-- "Protocol [élément]"
+- "L'Histoire de [élément]"
+- "Mission [Concept]"
+- "Le Mystère [élément]"
 
 Réponds uniquement avec le titre, sans guillemets.`
-    : `Analyze this modern story and create a catchy title that captures its futuristic essence.
+    : `Analyze this modern story and create a simple and catchy title that captures its essence.
 
 STORY: ${storyContent.substring(0, 1200)}...
 
 TITLE CRITERIA:
-- Modern and technological style
+- Modern and simple style
 - Evokes innovation and the future
 - Subtly references the concept of "${secretWord}"
 - Sparks curiosity without revealing everything
-- Maximum 6 words
-- Avoid banal formulas
+- Maximum 5 words
+- Avoid complicated formulas
+- Use simple and easy words
 
-MODERN STYLE EXAMPLES:
-- "Code [Concept]"
+SIMPLE MODERN STYLE EXAMPLES:
+- "The Secret of [Concept]"
 - "Project ${secretWord}"
-- "The [element] Algorithm"
-- "Nexus [Concept]"
-- "Protocol [element]"
+- "The Story of [element]"
+- "Mission [Concept]"
+- "The Mystery [element]"
 
 Respond only with the title, without quotes.`;
 
@@ -343,16 +353,120 @@ Respond only with the title, without quotes.`;
 export const generateImageWithGemini = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
   console.log('Attempting to generate image with Gemini Imagen...');
   
-  // Check API key first
   if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_api_key_here') {
     console.warn('Gemini API key not configured, using fallback image');
     return getFallbackImage();
   }
   
-  // Return fallback image immediately to avoid network issues
-  // This prevents the "Failed to fetch" error that's causing the application to fail
-  console.log('Using fallback image to avoid network issues');
-  return getFallbackImage();
+  // Analyser l'histoire pour extraire les éléments visuels clés
+  const storyExcerpt = storyText.substring(0, 1500);
+  
+  // Extraire l'âge approximatif du héros depuis l'histoire
+  const ageMatch = storyText.match(/(\d+)\s*ans?/);
+  const heroAge = ageMatch ? parseInt(ageMatch[1]) : 20;
+  
+  const prompt = `Create a beautiful artistic illustration that shows the main scene from this story.
+
+STORY ANALYSIS:
+- Main character: ${heroName} (approximately ${heroAge} years old)
+- Central element: "${secretWord}"
+- Story excerpt: ${storyExcerpt}
+
+VISUAL COMPOSITION:
+- Show ${heroName} as the main focus, age-appropriate appearance (${heroAge} years old)
+- Capture the most important moment from the story
+- Include visual elements that represent "${secretWord}" in the scene
+- Create an atmosphere that matches the story's mood and setting
+- Show the character's personality through body language and expression
+
+ART STYLE REQUIREMENTS:
+- High-quality anime/manga illustration style
+- Cinematic composition with dynamic angles
+- Rich, vibrant colors that enhance the mood
+- Detailed background that supports the narrative
+- Professional character design with expressive features
+- Magical or dramatic lighting effects
+
+TECHNICAL SPECIFICATIONS:
+- Portrait orientation (3:4 aspect ratio)
+- No text, letters, words, or written symbols anywhere
+- Focus on visual storytelling through imagery alone
+- Suitable for all ages, family-friendly content
+- High artistic quality with attention to detail
+
+MOOD AND ATMOSPHERE:
+- Capture the emotional core of the story
+- Create visual intrigue and wonder
+- Balance realism with fantastical elements
+- Inspiring and uplifting overall feeling
+
+The illustration should make viewers curious about the story and emotionally connect with the character's journey.`;
+
+  try {
+    console.log('Making request to Imagen API...');
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    const response = await fetch(`${IMAGEN_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        sampleCount: 1,
+        aspectRatio: "3:4",
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HARASSMENT", 
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      }),
+      signal: controller.signal
+    });
+
+    console.log('Imagen API response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Imagen API error: ${response.status} - ${errorText}`);
+      clearTimeout(timeoutId);
+      return getFallbackImage();
+    }
+
+    const data: ImagenResponse = await response.json();
+    console.log('Imagen API response received successfully');
+    
+    if (!data.candidates || data.candidates.length === 0) {
+      console.warn('No image generated by Imagen API, using fallback');
+      clearTimeout(timeoutId);
+      return getFallbackImage();
+    }
+
+    const imageUri = data.candidates[0].image.imageUri;
+    console.log('Generated image URI received');
+    
+    clearTimeout(timeoutId);
+    return imageUri;
+    
+  } catch (error) {
+    console.error('Error generating image with Gemini Imagen:', error);
+    return getFallbackImage();
+  }
 };
 
 const getFallbackImage = (): string => {
