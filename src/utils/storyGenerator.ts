@@ -1,30 +1,24 @@
 import { StoryData } from '../types';
-import { generateStoryWithGemini, generateTitleWithGemini, generateImageWithGemini } from './geminiApi';
+import { generateStoryWithGemini, generateTitleWithGemini } from './geminiApi';
 import { generateImageWithFreeService } from './freeImageApi';
 
 export const generateStory = async (heroName: string, secretWord: string, language: string, size: string): Promise<StoryData> => {
   try {
-    console.log('🚀 Starting story generation with Gemini APIs...');
+    console.log('🚀 Starting story generation...');
     
     // Generate story text with Gemini
-    console.log('📝 Generating story content...');
+    console.log('📝 Generating story content with Gemini...');
     const storyContent = await generateStoryWithGemini(heroName, secretWord, language, size);
     
     // Generate original title based on the story
-    console.log('🏷️ Generating story title...');
+    console.log('🏷️ Generating story title with Gemini...');
     const title = await generateTitleWithGemini(heroName, secretWord, storyContent, language);
     
-    // Try to generate custom illustration with Gemini Imagen first
-    console.log('🎨 Attempting image generation with Gemini Imagen...');
-    let imageUrl: string;
+    // Generate custom illustration with free services
+    console.log('🎨 Generating image with free service...');
+    const imageUrl = await generateImageWithFreeService(heroName, secretWord, storyContent);
     
-    try {
-      imageUrl = await generateImageWithGemini(heroName, secretWord, storyContent);
-      console.log('✅ Gemini Imagen generation successful!');
-    } catch (imageError) {
-      console.warn('⚠️ Gemini Imagen failed, falling back to free service:', imageError);
-      imageUrl = await generateImageWithFreeService(heroName, secretWord, storyContent);
-    }
+    console.log('✅ Story generation completed successfully!');
     
     return {
       heroName,
