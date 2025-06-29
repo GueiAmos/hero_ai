@@ -19,7 +19,7 @@ const generateWithPollinations = async (prompt: string): Promise<string> => {
       return a & a;
     }, 0));
     
-    const imageUrl = `https://image.pollinations.ai/prompt/chat?width=800&height=1000&enhance=true&model=flux`;
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=1000&enhance=true&model=flux`;
     
     console.log('Generated Pollinations URL:', imageUrl);
     
