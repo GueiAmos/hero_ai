@@ -3,7 +3,7 @@ import { RotateCcw, Download, RefreshCw, Sparkles, ArrowLeft, Share2 } from 'luc
 import { StoryData } from '../types';
 import { translations, Language } from '../i18n/translations';
 import { generatePDF } from '../utils/pdfGenerator';
-import { generateImageWithImagine } from '../utils/imagineApi';
+import { generateImageWithFreeService } from './freeImageApi';
 
 interface StoryScreenProps {
   storyData: StoryData;
@@ -28,7 +28,7 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
   const handleRegenerateImage = async () => {
     setIsRegeneratingImage(true);
     try {
-      const newImageUrl = await generateImageWithImagine(
+      const newImageUrl = await generateImageWithFreeService(
         storyData.heroName, 
         storyData.secretWord, 
         storyData.content

@@ -1,6 +1,6 @@
 import { StoryData } from '../types';
 import { generateStoryWithGemini, generateTitleWithGemini } from './geminiApi';
-import { generateImageWithImagine } from './imagineApi';
+import { generateImageWithFreeService } from './freeImageApi';
 
 export const generateStory = async (heroName: string, secretWord: string, language: string, size: string): Promise<StoryData> => {
   try {
@@ -10,8 +10,8 @@ export const generateStory = async (heroName: string, secretWord: string, langua
     // Generate original title based on the story
     const title = await generateTitleWithGemini(heroName, secretWord, storyContent, language);
     
-    // Generate custom illustration with Imagine.art
-    const imageUrl = await generateImageWithImagine(heroName, secretWord, storyContent);
+    // Generate custom illustration with free services (Pollinations.ai)
+    const imageUrl = await generateImageWithFreeService(heroName, secretWord, storyContent);
     
     return {
       heroName,
