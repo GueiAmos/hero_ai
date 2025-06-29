@@ -3,7 +3,7 @@ import { RotateCcw, Download, RefreshCw, Sparkles, ArrowLeft, Share2 } from 'luc
 import { StoryData } from '../types';
 import { translations, Language } from '../i18n/translations';
 import { generatePDF } from '../utils/pdfGenerator';
-import { generateImageWithGemini } from '../utils/geminiApi';
+import { generateImageWithDALLE3 } from '../utils/openaiApi';
 
 interface StoryScreenProps {
   storyData: StoryData;
@@ -28,7 +28,7 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
   const handleRegenerateImage = async () => {
     setIsRegeneratingImage(true);
     try {
-      const newImageUrl = await generateImageWithGemini(
+      const newImageUrl = await generateImageWithDALLE3(
         storyData.heroName, 
         storyData.secretWord, 
         storyData.content
