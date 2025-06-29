@@ -1,5 +1,6 @@
 import { StoryData } from '../types';
-import { generateStoryWithGemini, generateTitleWithGemini, generateImageWithGemini } from './geminiApi';
+import { generateStoryWithGemini, generateTitleWithGemini } from './geminiApi';
+import { generateImageWithFreeService } from './freeImageApi';
 
 export const generateStory = async (heroName: string, secretWord: string, language: string, size: string): Promise<StoryData> => {
   try {
@@ -9,8 +10,8 @@ export const generateStory = async (heroName: string, secretWord: string, langua
     // Generate original title based on the story
     const title = await generateTitleWithGemini(heroName, secretWord, storyContent, language);
     
-    // Generate custom illustration with Gemini Imagen
-    const imageUrl = await generateImageWithGemini(heroName, secretWord, storyContent);
+    // Generate custom illustration with free services
+    const imageUrl = await generateImageWithFreeService(heroName, secretWord, storyContent);
     
     return {
       heroName,
