@@ -1,66 +1,114 @@
-// Alternative gratuite utilisant plusieurs services
+// Services gratuits pour génération d'images
 export interface FreeImageResponse {
   url: string;
   source: string;
 }
 
-// Service 1: Utiliser Pollinations AI (gratuit)
+// Service 1: Pollinations AI (gratuit et fiable)
 const generateWithPollinations = async (prompt: string): Promise<string> => {
   try {
-    const encodedPrompt = encodeURIComponent(prompt);
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=1000&seed=${Math.floor(Math.random() * 1000000)}`;
+    console.log('Trying Pollinations AI with prompt:', prompt);
     
-    // Vérifier que l'image est accessible
-    const response = await fetch(imageUrl, { method: 'HEAD' });
-    if (response.ok) {
-      console.log('Image generated with Pollinations AI:', imageUrl);
+    // Nettoyer et encoder le prompt
+    const cleanPrompt = prompt.replace(/[^a-zA-Z0-9\s,.-]/g, '').trim();
+    const encodedPrompt = encodeURIComponent(cleanPrompt);
+    
+    // Générer une seed unique basée sur le prompt
+    const seed = Math.abs(cleanPrompt.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0));
+    
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=1000&seed=${seed}&enhance=true&model=flux`;
+    
+    console.log('Generated Pollinations URL:', imageUrl);
+    
+    // Test de connectivité simple
+    const testResponse = await fetch(imageUrl, { 
+      method: 'HEAD',
+      timeout: 10000
+    }).catch(() => null);
+    
+    if (testResponse && testResponse.ok) {
+      console.log('✅ Pollinations AI image verified');
       return imageUrl;
     }
-    throw new Error('Pollinations AI failed');
+    
+    // Si HEAD échoue, essayer quand même l'URL (parfois HEAD ne fonctionne pas mais GET oui)
+    console.log('⚠️ HEAD request failed, but trying URL anyway');
+    return imageUrl;
+    
   } catch (error) {
-    console.error('Pollinations AI error:', error);
+    console.error('❌ Pollinations AI error:', error);
     throw error;
   }
 };
 
-// Service 2: Utiliser Picsum avec overlay text (fallback créatif)
+// Service 2: Picsum avec seed personnalisé
 const generateWithPicsum = async (heroName: string, secretWord: string): Promise<string> => {
   try {
-    const seed = Math.floor(Math.random() * 1000);
-    const imageUrl = `https://picsum.photos/seed/${heroName}-${secretWord}-${seed}/800/1000`;
+    console.log('Trying Picsum with creative seed...');
     
-    console.log('Generated creative image with Picsum:', imageUrl);
+    // Créer une seed unique basée sur les paramètres
+    const seedString = `${heroName}-${secretWord}-${Date.now()}`;
+    const seed = Math.abs(seedString.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0)) % 1000;
+    
+    const imageUrl = `https://picsum.photos/seed/${seed}/800/1000?blur=0&grayscale=0`;
+    
+    console.log('Generated Picsum URL:', imageUrl);
     return imageUrl;
+    
   } catch (error) {
-    console.error('Picsum error:', error);
+    console.error('❌ Picsum error:', error);
     throw error;
   }
 };
 
-// Service 3: Utiliser Unsplash avec recherche thématique
-const generateWithUnsplash = async (secretWord: string): Promise<string> => {
+// Service 3: Lorem Picsum avec ID spécifique
+const generateWithLoremPicsum = async (): Promise<string> => {
   try {
-    // Mots-clés basés sur le mot secret
-    const keywords = [
-      'adventure', 'hero', 'journey', 'magic', 'fantasy', 'story', 
-      'book', 'imagination', 'dream', 'creative', 'art', 'colorful'
-    ];
+    console.log('Trying Lorem Picsum with random ID...');
     
-    const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];
-    const searchTerm = secretWord.length > 2 ? secretWord : randomKeyword;
+    // Utiliser un ID aléatoire entre 1 et 1000
+    const randomId = Math.floor(Math.random() * 1000) + 1;
+    const imageUrl = `https://picsum.photos/id/${randomId}/800/1000`;
     
-    const imageUrl = `https://source.unsplash.com/800x1000/?${searchTerm},illustration,art`;
-    
-    console.log('Generated thematic image with Unsplash:', imageUrl);
+    console.log('Generated Lorem Picsum URL:', imageUrl);
     return imageUrl;
+    
   } catch (error) {
-    console.error('Unsplash error:', error);
+    console.error('❌ Lorem Picsum error:', error);
+    throw error;
+  }
+};
+
+// Service 4: Placeholder avec couleurs dynamiques
+const generatePlaceholder = async (heroName: string, secretWord: string): Promise<string> => {
+  try {
+    console.log('Generating placeholder image...');
+    
+    // Générer des couleurs basées sur le nom et mot secret
+    const colors = ['FF6B6B', '4ECDC4', '45B7D1', 'FFA07A', '98D8C8', 'F7DC6F', 'BB8FCE', '85C1E9'];
+    const bgColor = colors[Math.abs(heroName.charCodeAt(0)) % colors.length];
+    const textColor = '2C3E50';
+    
+    const imageUrl = `https://via.placeholder.com/800x1000/${bgColor}/${textColor}?text=${encodeURIComponent('Hero AI')}`;
+    
+    console.log('Generated placeholder URL:', imageUrl);
+    return imageUrl;
+    
+  } catch (error) {
+    console.error('❌ Placeholder error:', error);
     throw error;
   }
 };
 
 export const generateImageWithFreeService = async (heroName: string, secretWord: string, storyText: string): Promise<string> => {
-  console.log('Generating image with free services...');
+  console.log('🎨 Starting image generation with free services...');
+  console.log('Parameters:', { heroName, secretWord, storyLength: storyText.length });
   
   // Analyser l'histoire pour extraire les éléments visuels clés
   const storyExcerpt = storyText.substring(0, 500);
@@ -83,24 +131,30 @@ export const generateImageWithFreeService = async (heroName: string, secretWord:
     ageDescription = 'mature adult';
   }
 
-  // Créer un prompt optimisé
-  const prompt = `Beautiful anime style illustration of a ${ageDescription} character in a modern adventure with ${secretWord} elements, vibrant colors, detailed art, magical atmosphere, portrait orientation`;
+  // Créer un prompt optimisé pour Pollinations
+  const prompt = `anime style portrait of ${ageDescription} character, modern adventure theme, ${secretWord} elements, vibrant colors, detailed digital art, magical atmosphere`;
+
+  console.log('Generated prompt:', prompt);
 
   // Essayer les services dans l'ordre de préférence
   const services = [
-    () => generateWithPollinations(prompt),
-    () => generateWithUnsplash(secretWord),
-    () => generateWithPicsum(heroName, secretWord)
+    { name: 'Pollinations AI', fn: () => generateWithPollinations(prompt) },
+    { name: 'Picsum Creative', fn: () => generateWithPicsum(heroName, secretWord) },
+    { name: 'Lorem Picsum', fn: () => generateWithLoremPicsum() },
+    { name: 'Placeholder', fn: () => generatePlaceholder(heroName, secretWord) }
   ];
 
   for (let i = 0; i < services.length; i++) {
+    const service = services[i];
     try {
-      const imageUrl = await services[i]();
+      console.log(`🔄 Trying ${service.name}...`);
+      const imageUrl = await service.fn();
+      console.log(`✅ ${service.name} succeeded:`, imageUrl);
       return imageUrl;
     } catch (error) {
-      console.warn(`Service ${i + 1} failed, trying next...`);
+      console.warn(`❌ ${service.name} failed:`, error);
       if (i === services.length - 1) {
-        // Si tous les services échouent, utiliser une image par défaut
+        console.log('🔄 All services failed, using hardcoded fallback');
         return getFallbackImage();
       }
     }
@@ -111,13 +165,15 @@ export const generateImageWithFreeService = async (heroName: string, secretWord:
 
 const getFallbackImage = (): string => {
   const modernImages = [
-    'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=1000&fit=crop',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop',
-    'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=1000&fit=crop',
-    'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1000&fit=crop',
-    'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop',
-    'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=1000&fit=crop'
+    'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=1000&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=1000&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=1000&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=1000&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=1000&fit=crop&auto=format'
   ];
   
-  return modernImages[Math.floor(Math.random() * modernImages.length)];
+  const selectedImage = modernImages[Math.floor(Math.random() * modernImages.length)];
+  console.log('📸 Using fallback image:', selectedImage);
+  return selectedImage;
 };

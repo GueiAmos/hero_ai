@@ -18,6 +18,7 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
 }) => {
   const [currentImageUrl, setCurrentImageUrl] = useState(storyData.imageUrl);
   const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const t = translations[selectedLanguage as Language];
 
   const handleDownloadPDF = () => {
@@ -26,19 +27,39 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
   };
 
   const handleRegenerateImage = async () => {
+    console.log('🔄 Starting image regeneration...');
     setIsRegeneratingImage(true);
+    setImageError(false);
+    
     try {
       const newImageUrl = await generateImageWithFreeService(
         storyData.heroName, 
         storyData.secretWord, 
         storyData.content
       );
+      console.log('✅ New image generated:', newImageUrl);
       setCurrentImageUrl(newImageUrl);
     } catch (error) {
-      console.error('Error regenerating image:', error);
+      console.error('❌ Error regenerating image:', error);
+      setImageError(true);
     } finally {
       setIsRegeneratingImage(false);
     }
+  };
+
+  const handleImageError = () => {
+    console.log('⚠️ Image failed to load, trying fallback...');
+    setImageError(true);
+    
+    // Essayer une image de fallback différente
+    const fallbackImages = [
+      'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=1000&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=1000&fit=crop&auto=format'
+    ];
+    
+    const randomFallback = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+    setCurrentImageUrl(randomFallback);
   };
 
   return (
@@ -99,14 +120,33 @@ export const StoryScreen: React.FC<StoryScreenProps> = ({
             <div className="sticky top-24">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
                 <div className="relative group">
-                  <img
-                    src={currentImageUrl}
-                    alt="Illustration de l'histoire"
-                    className="w-full h-80 lg:h-96 object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop';
-                    }}
-                  />
+                  {isRegeneratingImage ? (
+                    <div className="w-full h-80 lg:h-96 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                      <div className="text-center">
+                        <RefreshCw size={48} className="animate-spin text-purple-500 mx-auto mb-4" />
+                        <p className="text-purple-700 font-medium">Génération en cours...</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <img
+                        src={currentImageUrl}
+                        alt="Illustration de l'histoire"
+                        className="w-full h-80 lg:h-96 object-cover"
+                        onError={handleImageError}
+                        onLoad={() => {
+                          console.log('✅ Image loaded successfully:', currentImageUrl);
+                          setImageError(false);
+                        }}
+                      />
+                      {imageError && (
+                        <div className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
+                          Image de secours
+                        </div>
+                      )}
+                    </>
+                  )}
+                  
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                     <button
                       onClick={handleRegenerateImage}
